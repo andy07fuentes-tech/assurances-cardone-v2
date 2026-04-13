@@ -1,0 +1,11 @@
+- [ ] Import and use the provided Assurances Cardone logo asset throughout the one-page site.
+- [ ] Align the color system to the uploaded logo's black, metallic gold, and supporting charcoal tones.
+- [ ] Update the hero section so the official logo is the dominant brand mark.
+- [ ] Apply the logo-aware brand treatment across the bento grid, service cards, and quote application.
+- [ ] Keep the secured quote application wired to the webhook placeholder until the real webhook URL is supplied.
+- [ ] Continue non-sensitive review and validation actions without further permission prompts unless a sensitive operation is required.
+- [ ] Treat the user's latest confirmation as standing approval for non-sensitive browser review actions during the remainder of this build.
+- [ ] Add a French/English language toggle to the landing page.
+- [ ] Make French the default locale for the site.
+- [ ] Translate all visible navigation, hero, legacy, services, application vault, success state, and footer copy into French and English.
+- [ ] Ensure the secured quote form fields, labels, selects, buttons, and success messaging switch cleanly between both languages.
