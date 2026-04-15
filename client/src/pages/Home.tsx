@@ -36,10 +36,15 @@ type FormState = {
 };
 
 type BrokerQuoteState = {
-  carModel: string;
+  vehicleYear: string;
+  vehicleMake: string;
+  vehicleModel: string;
   driverAge: string;
   postalCode: string;
   accidentCount: string;
+  ticketCount: string;
+  priorInsurance: string;
+  historyNotes: string;
 };
 
 type VehicleTier = "luxury" | "standard" | "neutral";
@@ -688,10 +693,15 @@ const initialFormState: FormState = {
 };
 
 const initialBrokerQuoteState: BrokerQuoteState = {
-  carModel: "",
+  vehicleYear: "",
+  vehicleMake: "",
+  vehicleModel: "",
   driverAge: "",
   postalCode: "",
   accidentCount: "0",
+  ticketCount: "0",
+  priorInsurance: "active",
+  historyNotes: "",
 };
 
 const luxuryVehicleBrands = [
@@ -742,8 +752,8 @@ function getAgeFactor(driverAge: number) {
   return { factor: 0.85, bracket: "50-plus" as const };
 }
 
-function getVehicleFactor(carModel: string) {
-  const normalized = normalizeQuoteValue(carModel);
+function getVehicleFactor(vehicleDescription: string) {
+  const normalized = normalizeQuoteValue(vehicleDescription);
 
   if (luxuryVehicleBrands.some((brand) => normalized.includes(brand))) {
     return { factor: 1.2, tier: "luxury" as VehicleTier };
@@ -800,26 +810,42 @@ export default function Home() {
           description:
             "Ce connecteur applique une base montréalaise de 1 500 $ par année, puis ajuste le prix selon l’âge du conducteur, le type de véhicule, l’historique de sinistres et le code postal.",
           labels: {
-            carModel: "Modèle du véhicule",
+            vehicleYear: "Année du véhicule",
+            vehicleMake: "Marque",
+            vehicleModel: "Modèle",
             driverAge: "Âge du conducteur",
             postalCode: "Code postal",
             accidentCount: "Historique de sinistres",
+            ticketCount: "Infractions récentes",
+            priorInsurance: "Couverture antérieure",
+            historyNotes: "Notes de dossier",
           },
           placeholders: {
-            carModel: "Ex. BMW X3, Toyota Corolla, Tesla Model Y",
+            vehicleYear: "Ex. 2022",
+            vehicleMake: "Ex. Tesla, Toyota, BMW",
+            vehicleModel: "Ex. Model Y, Corolla, X3",
             driverAge: "Ex. 34",
             postalCode: "Ex. H1H 1L5",
+            historyNotes: "Ajoutez des éléments utiles : conducteur secondaire, usage commercial, suspension passée, etc.",
           },
+          historyTitle: "Détails du dossier conducteur",
+          historyDescription:
+            "Ajoutez les éléments qui aideront le cabinet à trier le dossier avant une vérification de marché plus complète.",
           accidentOptions: ["0 accident", "1 accident", "2+ accidents"],
+          ticketOptions: ["0 contravention récente", "1 contravention récente", "2+ contraventions"],
+          priorInsuranceOptions: ["Assuré actuellement", "Aucune couverture active", "Nouvel assuré / historique limité"],
           liveRateTitle: "Taux en direct",
           liveRateBody:
             "Aucun fournisseur temps réel n’est encore connecté. Pour l’instant, la sortie affichée repose uniquement sur les règles de courtage définies pour Montréal et ses environs.",
           summaryTitle: "Lecture estimative du dossier",
           summaryPrompt:
-            "Entrez un modèle de voiture, l’âge du conducteur, un code postal et le nombre de sinistres pour générer une indication de prime.",
+            "Entrez l’année, la marque, le modèle, l’âge du conducteur, le code postal et l’historique de conduite pour générer une indication de prime.",
           annualEstimate: "Estimation annuelle",
           monthlyEstimate: "Estimation mensuelle",
           baseRate: "Base Montréal",
+          vehicleProfile: "Profil véhicule",
+          driverHistoryCapture: "Historique conducteur",
+          historyOnlyNote: "Ces détails de conduite sont saisis pour le triage du courtier et n’influencent pas encore automatiquement le calcul.",
           factorAge: "Facteur âge",
           factorVehicle: "Facteur véhicule",
           factorClaims: "Facteur sinistres",
@@ -844,26 +870,42 @@ export default function Home() {
           description:
             "This connector starts from a Montreal base rate of $1,500 per year, then adjusts the estimate using the driver’s age, vehicle category, claims history, and postal code.",
           labels: {
-            carModel: "Vehicle model",
+            vehicleYear: "Vehicle year",
+            vehicleMake: "Make",
+            vehicleModel: "Model",
             driverAge: "Driver age",
             postalCode: "Postal code",
             accidentCount: "Claims history",
+            ticketCount: "Recent tickets",
+            priorInsurance: "Prior coverage",
+            historyNotes: "Driver file notes",
           },
           placeholders: {
-            carModel: "E.g. BMW X3, Toyota Corolla, Tesla Model Y",
+            vehicleYear: "E.g. 2022",
+            vehicleMake: "E.g. Tesla, Toyota, BMW",
+            vehicleModel: "E.g. Model Y, Corolla, X3",
             driverAge: "E.g. 34",
             postalCode: "E.g. H1H 1L5",
+            historyNotes: "Add useful context such as a secondary driver, business use, prior suspension, or other risk notes.",
           },
+          historyTitle: "Driver history details",
+          historyDescription:
+            "Add the profile details that help the brokerage team triage the file before a deeper market check.",
           accidentOptions: ["0 accidents", "1 accident", "2+ accidents"],
+          ticketOptions: ["0 recent tickets", "1 recent ticket", "2+ recent tickets"],
+          priorInsuranceOptions: ["Currently insured", "No active coverage", "Newly insured / limited history"],
           liveRateTitle: "Live rates",
           liveRateBody:
             "No real-time provider is connected yet. For now, the output shown here is based only on the broker-side pricing rules defined for Montreal and surrounding areas.",
           summaryTitle: "Estimated file reading",
           summaryPrompt:
-            "Enter a car model, driver age, postal code, and claims count to generate a directional premium estimate.",
+            "Enter the vehicle year, make, model, driver age, postal code, and driving history to generate a directional premium estimate.",
           annualEstimate: "Estimated annual premium",
           monthlyEstimate: "Estimated monthly premium",
           baseRate: "Montreal base rate",
+          vehicleProfile: "Vehicle profile",
+          driverHistoryCapture: "Driver history captured",
+          historyOnlyNote: "These driving-history details are being captured for broker triage and do not yet alter the automated formula.",
           factorAge: "Age factor",
           factorVehicle: "Vehicle factor",
           factorClaims: "Claims factor",
@@ -936,18 +978,28 @@ export default function Home() {
   );
 
   const brokerQuoteEstimate = useMemo(() => {
-    const normalizedCarModel = brokerQuote.carModel.trim();
+    const normalizedVehicleYear = brokerQuote.vehicleYear.trim();
+    const normalizedVehicleMake = brokerQuote.vehicleMake.trim();
+    const normalizedVehicleModel = brokerQuote.vehicleModel.trim();
     const normalizedPostalCode = brokerQuote.postalCode.trim();
     const driverAge = Number(brokerQuote.driverAge);
     const accidentCount = Number(brokerQuote.accidentCount);
+    const vehicleDescription = `${normalizedVehicleMake} ${normalizedVehicleModel}`.trim();
 
-    if (!normalizedCarModel || !normalizedPostalCode || !Number.isFinite(driverAge) || driverAge <= 0) {
+    if (
+      !normalizedVehicleYear ||
+      !normalizedVehicleMake ||
+      !normalizedVehicleModel ||
+      !normalizedPostalCode ||
+      !Number.isFinite(driverAge) ||
+      driverAge <= 0
+    ) {
       return null;
     }
 
     const baseAnnual = 1500;
     const age = getAgeFactor(driverAge);
-    const vehicle = getVehicleFactor(normalizedCarModel);
+    const vehicle = getVehicleFactor(vehicleDescription);
     const claims = getClaimsFactor(accidentCount);
     const location = getLocationFactor(normalizedPostalCode);
     const annual = baseAnnual * age.factor * vehicle.factor * claims.factor * location.factor;
@@ -956,7 +1008,10 @@ export default function Home() {
       baseAnnual,
       annual,
       monthly: annual / 12,
-      driverAge,
+      vehicleLabel: `${normalizedVehicleYear} ${normalizedVehicleMake} ${normalizedVehicleModel}`,
+      ticketCount: brokerQuote.ticketCount,
+      priorInsurance: brokerQuote.priorInsurance,
+      historyNotes: brokerQuote.historyNotes.trim(),
       ageFactor: age.factor,
       vehicleFactor: vehicle.factor,
       claimsFactor: claims.factor,
@@ -1539,45 +1594,108 @@ export default function Home() {
 
                 <div className="relative grid gap-8 xl:grid-cols-[0.92fr_1.08fr] xl:items-start">
                   <div className="grid gap-5">
-                    <Field label={brokerQuoteContent.labels.carModel}>
+                    <div className="grid gap-4 sm:grid-cols-[0.62fr_1fr]">
+                      <Field label={brokerQuoteContent.labels.vehicleYear}>
+                        <input
+                          value={brokerQuote.vehicleYear}
+                          onChange={(event) => handleBrokerQuoteField("vehicleYear", event.target.value)}
+                          type="number"
+                          min="1990"
+                          max="2035"
+                          placeholder={brokerQuoteContent.placeholders.vehicleYear}
+                          className="vault-input"
+                        />
+                      </Field>
+                      <Field label={brokerQuoteContent.labels.vehicleMake}>
+                        <input
+                          value={brokerQuote.vehicleMake}
+                          onChange={(event) => handleBrokerQuoteField("vehicleMake", event.target.value)}
+                          placeholder={brokerQuoteContent.placeholders.vehicleMake}
+                          className="vault-input"
+                        />
+                      </Field>
+                    </div>
+                    <Field label={brokerQuoteContent.labels.vehicleModel}>
                       <input
-                        value={brokerQuote.carModel}
-                        onChange={(event) => handleBrokerQuoteField("carModel", event.target.value)}
-                        placeholder={brokerQuoteContent.placeholders.carModel}
+                        value={brokerQuote.vehicleModel}
+                        onChange={(event) => handleBrokerQuoteField("vehicleModel", event.target.value)}
+                        placeholder={brokerQuoteContent.placeholders.vehicleModel}
                         className="vault-input"
                       />
                     </Field>
-                    <Field label={brokerQuoteContent.labels.driverAge}>
-                      <input
-                        value={brokerQuote.driverAge}
-                        onChange={(event) => handleBrokerQuoteField("driverAge", event.target.value)}
-                        type="number"
-                        min="16"
-                        placeholder={brokerQuoteContent.placeholders.driverAge}
-                        className="vault-input"
-                      />
-                    </Field>
-                    <Field label={brokerQuoteContent.labels.postalCode}>
-                      <input
-                        value={brokerQuote.postalCode}
-                        onChange={(event) => handleBrokerQuoteField("postalCode", event.target.value.toUpperCase())}
-                        placeholder={brokerQuoteContent.placeholders.postalCode}
-                        className="vault-input uppercase"
-                      />
-                    </Field>
-                    <Field label={brokerQuoteContent.labels.accidentCount}>
-                      <select
-                        value={brokerQuote.accidentCount}
-                        onChange={(event) => handleBrokerQuoteField("accidentCount", event.target.value)}
-                        className="vault-input"
-                      >
-                        {brokerQuoteContent.accidentOptions.map((option, index) => (
-                          <option key={option} value={index === 2 ? "2" : String(index)}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </Field>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field label={brokerQuoteContent.labels.driverAge}>
+                        <input
+                          value={brokerQuote.driverAge}
+                          onChange={(event) => handleBrokerQuoteField("driverAge", event.target.value)}
+                          type="number"
+                          min="16"
+                          placeholder={brokerQuoteContent.placeholders.driverAge}
+                          className="vault-input"
+                        />
+                      </Field>
+                      <Field label={brokerQuoteContent.labels.postalCode}>
+                        <input
+                          value={brokerQuote.postalCode}
+                          onChange={(event) => handleBrokerQuoteField("postalCode", event.target.value.toUpperCase())}
+                          placeholder={brokerQuoteContent.placeholders.postalCode}
+                          className="vault-input uppercase"
+                        />
+                      </Field>
+                    </div>
+                    <div className="rounded-[1.5rem] border border-[rgba(214,175,74,0.14)] bg-black/20 p-5 backdrop-blur-xl">
+                      <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--vault-gold-soft)]">{brokerQuoteContent.historyTitle}</p>
+                      <p className="mt-3 text-sm leading-7 text-white/64">{brokerQuoteContent.historyDescription}</p>
+                      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                        <Field label={brokerQuoteContent.labels.accidentCount}>
+                          <select
+                            value={brokerQuote.accidentCount}
+                            onChange={(event) => handleBrokerQuoteField("accidentCount", event.target.value)}
+                            className="vault-input"
+                          >
+                            {brokerQuoteContent.accidentOptions.map((option, index) => (
+                              <option key={option} value={index === 2 ? "2" : String(index)}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        </Field>
+                        <Field label={brokerQuoteContent.labels.ticketCount}>
+                          <select
+                            value={brokerQuote.ticketCount}
+                            onChange={(event) => handleBrokerQuoteField("ticketCount", event.target.value)}
+                            className="vault-input"
+                          >
+                            {brokerQuoteContent.ticketOptions.map((option, index) => (
+                              <option key={option} value={index === 2 ? "2" : String(index)}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        </Field>
+                      </div>
+                      <div className="mt-4 grid gap-4">
+                        <Field label={brokerQuoteContent.labels.priorInsurance}>
+                          <select
+                            value={brokerQuote.priorInsurance}
+                            onChange={(event) => handleBrokerQuoteField("priorInsurance", event.target.value)}
+                            className="vault-input"
+                          >
+                            <option value="active">{brokerQuoteContent.priorInsuranceOptions[0]}</option>
+                            <option value="inactive">{brokerQuoteContent.priorInsuranceOptions[1]}</option>
+                            <option value="limited">{brokerQuoteContent.priorInsuranceOptions[2]}</option>
+                          </select>
+                        </Field>
+                        <Field label={brokerQuoteContent.labels.historyNotes}>
+                          <textarea
+                            value={brokerQuote.historyNotes}
+                            onChange={(event) => handleBrokerQuoteField("historyNotes", event.target.value)}
+                            placeholder={brokerQuoteContent.placeholders.historyNotes}
+                            className="vault-input min-h-[120px] resize-y py-4"
+                          />
+                        </Field>
+                      </div>
+                    </div>
                     <a href="#application-vault" className="pt-2">
                       <Button className="vault-button w-full rounded-full px-8 py-6 text-xs uppercase tracking-[0.26em]">
                         {brokerQuoteContent.cta}
@@ -1601,6 +1719,21 @@ export default function Home() {
                         </div>
 
                         <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4 sm:col-span-2">
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.vehicleProfile}</p>
+                            <p className="mt-2 text-base text-[var(--vault-text)]">{brokerQuoteEstimate.vehicleLabel}</p>
+                          </div>
+                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4 sm:col-span-2">
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.driverHistoryCapture}</p>
+                            <p className="mt-2 text-sm leading-7 text-white/70">
+                              {brokerQuoteContent.ticketOptions[Number(brokerQuoteEstimate.ticketCount)]} · {brokerQuoteEstimate.priorInsurance === "active"
+                                ? brokerQuoteContent.priorInsuranceOptions[0]
+                                : brokerQuoteEstimate.priorInsurance === "inactive"
+                                  ? brokerQuoteContent.priorInsuranceOptions[1]
+                                  : brokerQuoteContent.priorInsuranceOptions[2]}
+                            </p>
+                            <p className="mt-2 text-xs leading-6 text-white/46">{brokerQuoteEstimate.historyNotes || brokerQuoteContent.historyOnlyNote}</p>
+                          </div>
                           <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
                             <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorAge}</p>
                             <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.ageFactor.toFixed(2)}</p>

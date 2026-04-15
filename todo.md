@@ -35,3 +35,7 @@
 - [ ] Display estimated annual and monthly pricing, plus a manual-review state for higher-risk profiles.
 - [ ] Preserve the Digital Vault visual language and bilingual experience in the new quote connector UI.
 - [ ] Research future real-time broker-rate integration options for Applied Systems Applied Rating Services and QuickFacts, with Québec-focused implementation guidance.
+- [ ] Extend the Broker Quote Connector with separate vehicle year, make, and model fields.
+- [ ] Add a dedicated driver-history section to collect profile details beyond accident count.
+- [ ] Update the estimate panel to reflect the richer vehicle and driver-profile intake without breaking the current pricing rules.
+- [ ] Preserve the bilingual Digital Vault styling and application-flow continuity in the expanded quote form.

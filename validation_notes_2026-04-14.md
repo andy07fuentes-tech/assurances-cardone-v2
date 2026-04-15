@@ -22,3 +22,13 @@ The page also makes clear that no live-rate provider is connected yet and labels
 A second interaction switched the claims field to `2+ accidents`. The selector updated correctly in the UI, confirming the higher-risk state can be chosen. The dedicated manual-review message exists in the source logic and copy, although the compact browser viewport did not fully expose that panel during the final visual pass.
 
 A production build completed successfully after the feature addition. The only build note remained the existing non-blocking bundle-size warning.
+
+## Expanded Broker Quote Connector validation
+
+The Broker Quote Connector now collects separate `vehicle year`, `make`, and `model` inputs, plus a dedicated driver-history block with recent tickets, prior coverage status, and freeform broker notes.
+
+A live French-language test with `2022`, `Tesla`, `Model Y`, driver age `24`, postal code `H2X 1Y4`, `0 accident`, `0 contravention récente`, and active prior coverage rendered correctly in the preview and preserved the existing estimate of `2,970 $` annually and `248 $` monthly.
+
+The estimator summary now reflects the richer intake by showing `2022 Tesla Model Y` as the vehicle profile and surfacing the captured driver-history details for broker review, while keeping the current automated pricing formula limited to age, vehicle category, claims count, and Montréal postal-code detection.
+
+A production build completed successfully after the expansion, with only the existing non-blocking bundle-size warning.
