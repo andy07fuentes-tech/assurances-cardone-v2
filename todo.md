@@ -9,3 +9,29 @@
 - [ ] Make French the default locale for the site.
 - [ ] Translate all visible navigation, hero, legacy, services, application vault, success state, and footer copy into French and English.
 - [ ] Ensure the secured quote form fields, labels, selects, buttons, and success messaging switch cleanly between both languages.
+- [ ] Share the current live preview source files with the user.
+- [ ] Adjust the hero layout so the command-deck card no longer covers the 'Explorer les protections' button.
+- [ ] Review the Courtiers Unis Cardone reference page and extract company facts, positioning, and service information relevant to the landing page.
+- [ ] Update the Assurances Cardone website copy in French and English using the reference company information while preserving the Digital Vault design.
+- [ ] Validate that the revised content remains accurate, premium, and consistent across the site sections.
+- [ ] Compare the reference-based content edits against the live preview and explain the exact changes to the user.
+- [ ] If the current edits are too subtle, make more visible company-information updates so the difference is obvious in the live page.
+- [ ] Review the newly shared address and company information reference link for additional factual details.
+- [ ] Add a more visible company-information section to the landing page with address, broker identity, contact details, and why-use-a-broker messaging.
+- [ ] Keep the new company-information section bilingual, with French as the default presentation.
+- [ ] Add a premium preloader experience that fits the black-and-gold Digital Vault brand.
+- [ ] Enhance the hero section with more modern motion while keeping the experience elegant and high-end.
+- [ ] Ensure the new animation treatment works cleanly in both French and English views.
+- [ ] Validate that the motion remains smooth and does not interfere with readability or calls to action.
+- [ ] Investigate why the live preview is not showing the latest visible updates such as the preloader and hero motion.
+- [ ] Verify whether the current preview is serving stale content or whether the recent changes were not fully applied.
+- [ ] Restore the latest visible version and confirm the user can review it from the preview link.
+- [ ] Modernize the hero section further with a cleaner, more current composition.
+- [ ] Center the official Cardone logo in the hero instead of keeping it aligned to the side.
+- [ ] Preserve the premium black-and-gold Digital Vault tone while improving the hero balance and visual focus.
+- [ ] Add a Broker Quote Connector section for automobile quote estimation on the Assurances Cardone one-page site.
+- [ ] Collect quote inputs for car model, driver age, postal code, and accident history so the pricing rules can be applied transparently.
+- [ ] Implement estimate logic using the provided Montréal base rate and age, vehicle, claims, and location multipliers.
+- [ ] Display estimated annual and monthly pricing, plus a manual-review state for higher-risk profiles.
+- [ ] Preserve the Digital Vault visual language and bilingual experience in the new quote connector UI.
+- [ ] Research future real-time broker-rate integration options for Applied Systems Applied Rating Services and QuickFacts, with Québec-focused implementation guidance.

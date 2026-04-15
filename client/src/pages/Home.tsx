@@ -6,7 +6,7 @@ and motion that feels like systems authenticating rather than generic SaaS anima
 */
 
 import { Button } from "@/components/ui/button";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
 import {
   ArrowRight,
   Building2,
@@ -35,6 +35,15 @@ type FormState = {
   preferredContact: string;
 };
 
+type BrokerQuoteState = {
+  carModel: string;
+  driverAge: string;
+  postalCode: string;
+  accidentCount: string;
+};
+
+type VehicleTier = "luxury" | "standard" | "neutral";
+
 type VaultService = {
   title: string;
   label: string;
@@ -48,6 +57,11 @@ type Pillar = {
   eyebrow: string;
   description: string;
   stat: string;
+};
+
+type CompanyPrinciple = {
+  title: string;
+  description: string;
 };
 
 type Content = {
@@ -85,6 +99,17 @@ type Content = {
     featureTitle: string;
     featureDescription: string;
     pillars: Pillar[];
+  };
+  companyInfo: {
+    eyebrow: string;
+    titleStart: string;
+    titleHighlight: string;
+    titleEnd: string;
+    description: string;
+    positioning: string;
+    details: Array<[string, string]>;
+    callCta: string;
+    principles: CompanyPrinciple[];
   };
   services: {
     eyebrow: string;
@@ -190,7 +215,7 @@ const content: Record<Locale, Content> = {
       title: "L’assurance conçue comme un",
       highlight: "coffre-fort d’actifs haute sécurité",
       description:
-        "Assurances Cardone présente la couverture comme une stratégie protégée. De l’automobile de prestige aux résidences et à la continuité d’entreprise, chaque conversation commence dans un système d’admission structuré pour la discrétion, la rapidité et la confiance.",
+        "À Montréal-Nord, Assurances Cardone présente la couverture comme une stratégie protégée. En tant que courtier d’assurance, l’agence magasine et négocie auprès de plusieurs assureurs afin d’obtenir la meilleure protection possible au meilleur coût, avec une approche structurée pour la discrétion, la rapidité et la confiance.",
       primaryCta: "Ouvrir l’application de soumission sécurisée",
       secondaryCta: "Explorer les protections",
       strip: [
@@ -216,7 +241,7 @@ const content: Record<Locale, Content> = {
       titleHighlight: "la confiance, la stratégie et le prestige",
       titleEnd: ".",
       description:
-        "Le site présente l’assurance comme une expérience-conseil haut de gamme. Au lieu d’exposer des produits commoditisés, il formule une philosophie de protection sécurisée pour des clients qui attendent de la clarté, de la discrétion et une structure intelligente.",
+        "Le site présente l’assurance comme une expérience-conseil haut de gamme enracinée dans la réalité d’un cabinet de courtage montréalais. Au lieu d’exposer des produits commoditisés, il met en scène une capacité à comparer plusieurs assureurs, à recommander la bonne structure de protection et à accompagner le client jusque dans le sinistre.",
       featureEyebrow: "Pilier signature",
       featureTitle: "Un héritage rehaussé par un langage de sécurité moderne.",
       featureDescription:
@@ -226,22 +251,60 @@ const content: Record<Locale, Content> = {
           title: "Héritage et confiance",
           eyebrow: "Confiance privée",
           description:
-            "Cardone conjugue une autorité de marque cérémoniale avec un accompagnement attentif pour les clients qui protègent leur personne, leur famille et leur exposition commerciale.",
+            "Cardone conjugue une autorité de marque cérémoniale avec le rôle concret d’un courtier qui conseille le client selon ses besoins et protège sa famille, son patrimoine et son exposition commerciale.",
           stat: "Protocole d’admission d’élite",
         },
         {
           title: "Gestion stratégique du risque",
           eyebrow: "Analyse assistée par IA",
           description:
-            "Chaque demande est structurée comme un dossier d’actifs sécurisé afin d’accélérer la qualification et de renforcer le contexte de souscription.",
+            "Chaque demande est structurée comme un dossier d’actifs sécurisé afin d’évaluer les produits offerts par plusieurs assureurs, d’accélérer la qualification et de recommander une protection plus précise.",
           stat: "Réponse concierge en 60 secondes",
         },
         {
           title: "Protection d’actifs à haute valeur",
           eyebrow: "Auto · Résidence · Entreprise",
           description:
-            "L’agence aborde la protection comme une stratégie, en harmonisant l’architecture d’assurance avec les réalités du patrimoine, de l’immobilier et de l’entreprise.",
+            "L’agence aborde la protection comme une stratégie, en harmonisant l’architecture d’assurance avec les réalités de l’automobile, de l’habitation, de l’entreprise et de l’accompagnement lors d’un sinistre.",
           stat: "Conçu pour les profils complexes",
+        },
+      ],
+    },
+    companyInfo: {
+      eyebrow: "Cabinet & coordonnées",
+      titleStart: "Une présence de courtage clairement ancrée à",
+      titleHighlight: "Montréal-Nord",
+      titleEnd: ".",
+      description:
+        "Cette section rend le cabinet immédiatement identifiable: qui vous conseille, où le joindre et quelle promesse professionnelle guide l’expérience Cardone au-delà de l’esthétique premium.",
+      positioning: "« Votre meilleure assurance est un courtier d’assurance! »",
+      details: [
+        ["Courtier", "Roberto Cardone"],
+        ["Entreprise", "Cardone Assurances générales Inc."],
+        ["Adresse", "4210, boulevard Henri-Bourassa Est, Montréal-Nord, QC H1H 1L5"],
+        ["Téléphone", "(514) 327-2040"],
+      ],
+      callCta: "Appeler le cabinet",
+      principles: [
+        {
+          title: "Évaluer les assureurs",
+          description:
+            "Le cabinet compare les produits offerts sur le marché afin de bâtir une protection plus pertinente pour chaque profil.",
+        },
+        {
+          title: "Conseiller selon les besoins",
+          description:
+            "La recommandation ne part pas d’un produit générique, mais du contexte réel du client, de ses biens et de son exposition au risque.",
+        },
+        {
+          title: "Recommander la bonne structure",
+          description:
+            "Cardone articule la couverture comme une architecture de protection, avec une logique claire sur le coût, la responsabilité et la valeur à défendre.",
+        },
+        {
+          title: "Accompagner lors d’un sinistre",
+          description:
+            "L’accompagnement se prolonge lorsque survient une réclamation, afin que le client ne soit pas seul au moment le plus sensible.",
         },
       ],
     },
@@ -250,7 +313,7 @@ const content: Record<Locale, Content> = {
       title:
         "Des cartes de services bordées d’or qui dévoilent la couche stratégique derrière chaque protection.",
       description:
-        "Chaque carte agit comme un panneau protégé. La première face introduit l’offre. Le revers explique comment la couverture s’inscrit dans le modèle-conseil haut de gamme de Cardone.",
+        "Chaque carte agit comme un panneau protégé. La première face introduit l’offre. Le revers explique comment Cardone évalue les options du marché, conseille le client et accompagne la protection jusqu’au moment critique d’une réclamation.",
       detailLabel: "Détail stratégique",
       advisoryBadge: "Structure-conseil protégée",
       cards: [
@@ -365,7 +428,7 @@ const content: Record<Locale, Content> = {
     footer: {
       company: "Assurances Cardone — Assurances Générales Inc.",
       description:
-        "Une expérience d’assurance haut de gamme présentée comme un coffre-fort numérique sécurisé.",
+        "Cabinet de courtage d’assurance de Montréal-Nord présenté comme un coffre-fort numérique sécurisé. 4210, boulevard Henri-Bourassa Est · (514) 327-2040.",
     },
   },
   en: {
@@ -379,12 +442,12 @@ const content: Record<Locale, Content> = {
       toggleEn: "EN",
     },
     hero: {
-      badge: "Premium insurance intelligence for high-value profiles",
+      badge: "Premium insurance intelligence for Montreal high-value profiles",
       kicker: "A sovereign system for risk, legacy, and protection",
       title: "Insurance designed like a",
       highlight: "high-security asset vault",
       description:
-        "Assurances Cardone positions coverage as a protected strategy. From luxury auto to estates and business continuity, each policy conversation begins inside a structured intake system built for discretion, speed, and confidence.",
+        "From Montreal North, Assurances Cardone positions coverage as a protected strategy. As an insurance broker, the firm shops and negotiates across multiple insurers to secure the best possible protection at the right cost, all within a structured intake system built for discretion, speed, and confidence.",
       primaryCta: "Open the Secured Quote Application",
       secondaryCta: "Explore Coverages",
       strip: [
@@ -410,7 +473,7 @@ const content: Record<Locale, Content> = {
       titleHighlight: "trust, strategy, and prestige",
       titleEnd: ".",
       description:
-        "The site frames insurance as a premium advisory experience. Instead of presenting commodity products, it articulates a secure protection philosophy designed for clients who expect clarity, discretion, and intelligent structure.",
+        "The site frames insurance as a premium advisory experience grounded in the real work of a Montreal brokerage. Instead of presenting commodity products, it expresses Cardone’s ability to compare insurers, recommend the right protection structure, and support the client through a claim when it matters most.",
       featureEyebrow: "Signature pillar",
       featureTitle: "Heritage elevated by modern security language.",
       featureDescription:
@@ -420,22 +483,60 @@ const content: Record<Locale, Content> = {
           title: "Heritage & Trust",
           eyebrow: "Private-client confidence",
           description:
-            "Cardone combines ceremonial brand authority with attentive advisory care for clients protecting personal, family, and commercial exposure.",
+            "Cardone combines ceremonial brand authority with the practical role of a broker who advises clients according to their needs while protecting personal, family, and commercial exposure.",
           stat: "Elite intake protocol",
         },
         {
           title: "Strategic Risk Management",
           eyebrow: "AI-assisted review",
           description:
-            "Every application is structured like a secure asset file, allowing rapid qualification, sharper underwriting context, and a more precise coverage conversation.",
+            "Every application is structured like a secure asset file, allowing Cardone to evaluate multiple insurer offerings, accelerate qualification, and recommend more precise protection.",
           stat: "60-second concierge response",
         },
         {
           title: "High-Value Asset Protection",
           eyebrow: "Auto · Estate · Business",
           description:
-            "The agency positions protection as strategy, aligning premium insurance design with the realities of wealth, property, and enterprise continuity.",
+            "The agency positions protection as strategy, aligning premium insurance design with the realities of auto, home, business, and claim-time advocacy.",
           stat: "Structured for complex profiles",
+        },
+      ],
+    },
+    companyInfo: {
+      eyebrow: "Brokerage & contact",
+      titleStart: "A brokerage presence clearly rooted in",
+      titleHighlight: "Montreal North",
+      titleEnd: ".",
+      description:
+        "This section makes the firm immediately identifiable: who advises you, where to reach the office, and what professional promise guides the Cardone experience beyond the premium visual language.",
+      positioning: '"Your best insurance is an insurance broker."',
+      details: [
+        ["Broker", "Roberto Cardone"],
+        ["Company", "Cardone Assurances générales Inc."],
+        ["Address", "4210 Boulevard Henri-Bourassa East, Montréal-Nord, QC H1H 1L5"],
+        ["Phone", "(514) 327-2040"],
+      ],
+      callCta: "Call the brokerage",
+      principles: [
+        {
+          title: "Evaluate insurers",
+          description:
+            "The brokerage compares products across the market in order to shape protection that is more relevant to each client profile.",
+        },
+        {
+          title: "Advise to actual needs",
+          description:
+            "The recommendation begins with the client’s context, assets, and exposure rather than with a generic off-the-shelf product.",
+        },
+        {
+          title: "Recommend the right structure",
+          description:
+            "Cardone frames coverage as a protection architecture, with clearer logic around cost, liability, and the value being defended.",
+        },
+        {
+          title: "Support during claims",
+          description:
+            "Advisory support continues when a claim occurs, so the client is not left alone at the most sensitive moment.",
         },
       ],
     },
@@ -444,7 +545,7 @@ const content: Record<Locale, Content> = {
       title:
         "Gold-edged service cards that reveal the strategic layer beneath the coverage.",
       description:
-        "Each card behaves like a protected panel. The first face introduces the offering. The reverse explains how the coverage is positioned inside Cardone’s premium advisory model.",
+        "Each card behaves like a protected panel. The first face introduces the offering. The reverse explains how Cardone evaluates market options, advises the client, and supports the protection strategy through the claims stage.",
       detailLabel: "Strategic detail",
       advisoryBadge: "Protected advisory structure",
       cards: [
@@ -559,7 +660,7 @@ const content: Record<Locale, Content> = {
     footer: {
       company: "Assurances Cardone — Assurances Générales Inc.",
       description:
-        "Premium insurance advisory presented in a secure digital-vault experience.",
+        "Montreal-North insurance brokerage advisory, presented as a secure digital-vault experience. 4210, boulevard Henri-Bourassa Est · (514) 327-2040.",
     },
   },
 };
@@ -586,6 +687,97 @@ const initialFormState: FormState = {
   preferredContact: content.fr.application.step2.contactOptions[0],
 };
 
+const initialBrokerQuoteState: BrokerQuoteState = {
+  carModel: "",
+  driverAge: "",
+  postalCode: "",
+  accidentCount: "0",
+};
+
+const luxuryVehicleBrands = [
+  "mercedes",
+  "bmw",
+  "tesla",
+  "audi",
+  "porsche",
+  "lexus",
+  "land rover",
+  "range rover",
+  "jaguar",
+  "maserati",
+  "ferrari",
+  "lamborghini",
+  "bentley",
+  "rolls-royce",
+  "rolls royce",
+  "cadillac",
+];
+
+const standardVehicleBrands = [
+  "honda",
+  "toyota",
+  "hyundai",
+  "kia",
+  "mazda",
+  "nissan",
+  "subaru",
+  "ford",
+  "chevrolet",
+  "volkswagen",
+];
+
+function normalizeQuoteValue(value: string) {
+  return value.trim().toLowerCase();
+}
+
+function getAgeFactor(driverAge: number) {
+  if (driverAge < 25) {
+    return { factor: 1.5, bracket: "under-25" as const };
+  }
+
+  if (driverAge <= 50) {
+    return { factor: 1, bracket: "25-50" as const };
+  }
+
+  return { factor: 0.85, bracket: "50-plus" as const };
+}
+
+function getVehicleFactor(carModel: string) {
+  const normalized = normalizeQuoteValue(carModel);
+
+  if (luxuryVehicleBrands.some((brand) => normalized.includes(brand))) {
+    return { factor: 1.2, tier: "luxury" as VehicleTier };
+  }
+
+  if (standardVehicleBrands.some((brand) => normalized.includes(brand))) {
+    return { factor: 0.9, tier: "standard" as VehicleTier };
+  }
+
+  return { factor: 1, tier: "neutral" as VehicleTier };
+}
+
+function getClaimsFactor(accidentCount: number) {
+  if (accidentCount >= 2) {
+    return { factor: 1.4, manualReview: true };
+  }
+
+  if (accidentCount === 1) {
+    return { factor: 1.15, manualReview: false };
+  }
+
+  return { factor: 1, manualReview: false };
+}
+
+function getLocationFactor(postalCode: string) {
+  const normalized = postalCode.replace(/\s+/g, "").toUpperCase();
+  const isMontreal = normalized.startsWith("H");
+
+  return {
+    factor: isMontreal ? 1.1 : 1,
+    isMontreal,
+  };
+}
+
 export default function Home() {
   const reduceMotion = useReducedMotion();
   const [locale, setLocale] = useState<Locale>("fr");
@@ -593,13 +785,121 @@ export default function Home() {
   const [activeStep, setActiveStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showPreloader, setShowPreloader] = useState(true);
   const [form, setForm] = useState<FormState>(initialFormState);
+  const [brokerQuote, setBrokerQuote] = useState<BrokerQuoteState>(initialBrokerQuoteState);
 
   const t = content[locale];
+  const brokerQuoteContent =
+    locale === "fr"
+      ? {
+          eyebrow: "Broker Quote Connector",
+          titleStart: "Une estimation de",
+          titleHighlight: "tarif automobile",
+          titleEnd: " pensée pour le premier triage de courtage.",
+          description:
+            "Ce connecteur applique une base montréalaise de 1 500 $ par année, puis ajuste le prix selon l’âge du conducteur, le type de véhicule, l’historique de sinistres et le code postal.",
+          labels: {
+            carModel: "Modèle du véhicule",
+            driverAge: "Âge du conducteur",
+            postalCode: "Code postal",
+            accidentCount: "Historique de sinistres",
+          },
+          placeholders: {
+            carModel: "Ex. BMW X3, Toyota Corolla, Tesla Model Y",
+            driverAge: "Ex. 34",
+            postalCode: "Ex. H1H 1L5",
+          },
+          accidentOptions: ["0 accident", "1 accident", "2+ accidents"],
+          liveRateTitle: "Taux en direct",
+          liveRateBody:
+            "Aucun fournisseur temps réel n’est encore connecté. Pour l’instant, la sortie affichée repose uniquement sur les règles de courtage définies pour Montréal et ses environs.",
+          summaryTitle: "Lecture estimative du dossier",
+          summaryPrompt:
+            "Entrez un modèle de voiture, l’âge du conducteur, un code postal et le nombre de sinistres pour générer une indication de prime.",
+          annualEstimate: "Estimation annuelle",
+          monthlyEstimate: "Estimation mensuelle",
+          baseRate: "Base Montréal",
+          factorAge: "Facteur âge",
+          factorVehicle: "Facteur véhicule",
+          factorClaims: "Facteur sinistres",
+          factorLocation: "Facteur localisation",
+          vehicleLuxury: "Véhicule luxe / sport",
+          vehicleStandard: "Véhicule standard",
+          vehicleNeutral: "Véhicule à classer manuellement",
+          locationMontreal: "Code postal de Montréal détecté",
+          locationOutside: "Secteur hors Montréal détecté",
+          manualReview: "Révision manuelle requise",
+          manualReviewBody:
+            "Deux accidents ou plus déclenchent automatiquement un triage manuel avant toute indication plus précise du marché.",
+          disclaimer:
+            "Cette estimation est indicative et non contractuelle. Une soumission réelle dépendra des assureurs comparés, du dossier complet du conducteur et des critères de souscription.",
+          cta: "Poursuivre vers l’application sécurisée",
+        }
+      : {
+          eyebrow: "Broker Quote Connector",
+          titleStart: "An",
+          titleHighlight: "automobile rate estimate",
+          titleEnd: " built for first-pass broker triage.",
+          description:
+            "This connector starts from a Montreal base rate of $1,500 per year, then adjusts the estimate using the driver’s age, vehicle category, claims history, and postal code.",
+          labels: {
+            carModel: "Vehicle model",
+            driverAge: "Driver age",
+            postalCode: "Postal code",
+            accidentCount: "Claims history",
+          },
+          placeholders: {
+            carModel: "E.g. BMW X3, Toyota Corolla, Tesla Model Y",
+            driverAge: "E.g. 34",
+            postalCode: "E.g. H1H 1L5",
+          },
+          accidentOptions: ["0 accidents", "1 accident", "2+ accidents"],
+          liveRateTitle: "Live rates",
+          liveRateBody:
+            "No real-time provider is connected yet. For now, the output shown here is based only on the broker-side pricing rules defined for Montreal and surrounding areas.",
+          summaryTitle: "Estimated file reading",
+          summaryPrompt:
+            "Enter a car model, driver age, postal code, and claims count to generate a directional premium estimate.",
+          annualEstimate: "Estimated annual premium",
+          monthlyEstimate: "Estimated monthly premium",
+          baseRate: "Montreal base rate",
+          factorAge: "Age factor",
+          factorVehicle: "Vehicle factor",
+          factorClaims: "Claims factor",
+          factorLocation: "Location factor",
+          vehicleLuxury: "Luxury / sport vehicle",
+          vehicleStandard: "Standard vehicle",
+          vehicleNeutral: "Vehicle to classify manually",
+          locationMontreal: "Montreal postal code detected",
+          locationOutside: "Outside-Montreal area detected",
+          manualReview: "Manual review required",
+          manualReviewBody:
+            "Two or more accidents automatically trigger a manual brokerage review before any sharper market indication should be shown.",
+          disclaimer:
+            "This estimate is directional and non-binding. A real quote will still depend on carrier comparisons, the driver’s complete file, and underwriting rules.",
+          cta: "Continue to the secured application",
+        };
 
   useEffect(() => {
     document.documentElement.lang = locale === "fr" ? "fr-CA" : "en-CA";
   }, [locale]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowPreloader(false), reduceMotion ? 260 : 1750);
+    return () => window.clearTimeout(timer);
+  }, [reduceMotion]);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    if (showPreloader) {
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [showPreloader]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -625,9 +925,54 @@ export default function Home() {
   }, [locale, t.application.step2.assetOptions, t.application.step2.contactOptions, t.application.step2.priorityOptions]);
 
   const stepProgress = useMemo(() => `${(activeStep / 3) * 100}%`, [activeStep]);
+  const formatBrokerQuoteCurrency = useMemo(
+    () =>
+      new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", {
+        style: "currency",
+        currency: "CAD",
+        maximumFractionDigits: 0,
+      }),
+    [locale],
+  );
+
+  const brokerQuoteEstimate = useMemo(() => {
+    const normalizedCarModel = brokerQuote.carModel.trim();
+    const normalizedPostalCode = brokerQuote.postalCode.trim();
+    const driverAge = Number(brokerQuote.driverAge);
+    const accidentCount = Number(brokerQuote.accidentCount);
+
+    if (!normalizedCarModel || !normalizedPostalCode || !Number.isFinite(driverAge) || driverAge <= 0) {
+      return null;
+    }
+
+    const baseAnnual = 1500;
+    const age = getAgeFactor(driverAge);
+    const vehicle = getVehicleFactor(normalizedCarModel);
+    const claims = getClaimsFactor(accidentCount);
+    const location = getLocationFactor(normalizedPostalCode);
+    const annual = baseAnnual * age.factor * vehicle.factor * claims.factor * location.factor;
+
+    return {
+      baseAnnual,
+      annual,
+      monthly: annual / 12,
+      driverAge,
+      ageFactor: age.factor,
+      vehicleFactor: vehicle.factor,
+      claimsFactor: claims.factor,
+      locationFactor: location.factor,
+      vehicleTier: vehicle.tier,
+      isMontreal: location.isMontreal,
+      manualReview: claims.manualReview,
+    };
+  }, [brokerQuote]);
 
   const handleField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((previous) => ({ ...previous, [key]: value }));
+  };
+
+  const handleBrokerQuoteField = <K extends keyof BrokerQuoteState>(key: K, value: BrokerQuoteState[K]) => {
+    setBrokerQuote((previous) => ({ ...previous, [key]: value }));
   };
 
   const validateStep = (step: number) => {
@@ -729,6 +1074,77 @@ export default function Home() {
 
   return (
     <div className="bg-background text-foreground selection:bg-[rgba(201,162,39,0.25)] selection:text-[#f5ead0]">
+      <AnimatePresence>
+        {showPreloader ? (
+          <motion.div
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: reduceMotion ? 0.24 : 0.7, ease: [0.22, 1, 0.36, 1] } }}
+            className="fixed inset-0 z-[120] overflow-hidden bg-[radial-gradient(circle_at_top,rgba(214,175,74,0.16),transparent_26%),linear-gradient(180deg,#050505_0%,#090909_100%)]"
+          >
+            <div className="vault-grid absolute inset-0 opacity-35" />
+            <motion.div
+              className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(214,175,74,0.16),transparent_18%),radial-gradient(circle_at_50%_70%,rgba(255,255,255,0.04),transparent_24%)]"
+              animate={reduceMotion ? undefined : { opacity: [0.45, 0.9, 0.45], scale: [1, 1.04, 1] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className="relative flex min-h-screen items-center justify-center px-6">
+              <div className="relative w-full max-w-xl text-center">
+                <motion.div
+                  initial={reduceMotion ? false : { scale: 0.92, opacity: 0 }}
+                  animate={reduceMotion ? { opacity: 1 } : { scale: [0.96, 1.02, 1], opacity: 1 }}
+                  transition={{ duration: reduceMotion ? 0.24 : 1.15, ease: [0.22, 1, 0.36, 1] }}
+                  className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border border-[rgba(214,175,74,0.34)] bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.16),transparent_30%),rgba(10,10,10,0.82)] shadow-[0_0_70px_rgba(214,175,74,0.18),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl"
+                >
+                  <motion.img
+                    src={monogramImage}
+                    alt="Cardone monogram"
+                    className="h-16 w-16 object-contain"
+                    animate={reduceMotion ? undefined : { rotate: [0, 3, 0, -3, 0] }}
+                    transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                </motion.div>
+                <motion.div
+                  initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.18, duration: reduceMotion ? 0.24 : 0.75, ease: [0.22, 1, 0.36, 1] }}
+                  className="mt-8 space-y-4"
+                >
+                  <p className="vault-eyebrow">{locale === "fr" ? "Authentification du coffre numérique" : "Digital vault authentication"}</p>
+                  <h2 className="font-display text-4xl text-[var(--vault-text)] sm:text-5xl">
+                    {locale === "fr" ? "Assurances Cardone" : "Cardone Insurance"}
+                  </h2>
+                  <p className="mx-auto max-w-md text-sm leading-7 text-white/62 sm:text-base">
+                    {locale === "fr"
+                      ? "Ouverture d’un environnement de courtage sécurisé, conçu pour les profils patrimoniaux, résidentiels et commerciaux exigeants."
+                      : "Initializing a secure brokerage environment built for demanding personal, residential, and commercial protection profiles."}
+                  </p>
+                </motion.div>
+                <motion.div
+                  initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.28, duration: reduceMotion ? 0.24 : 0.75, ease: [0.22, 1, 0.36, 1] }}
+                  className="mx-auto mt-8 max-w-sm"
+                >
+                  <div className="h-[2px] overflow-hidden rounded-full bg-white/8">
+                    <motion.div
+                      className="h-full rounded-full bg-[linear-gradient(90deg,rgba(141,106,20,0.35)_0%,#d6af4a_55%,#f5e4b0_100%)]"
+                      initial={{ width: "0%", opacity: 0.8 }}
+                      animate={{ width: "100%", opacity: 1 }}
+                      transition={{ duration: reduceMotion ? 0.3 : 1.3, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </div>
+                  <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-white/38">
+                    <span>{locale === "fr" ? "Analyse" : "Analysis"}</span>
+                    <span>{locale === "fr" ? "Chiffrage" : "Encryption"}</span>
+                    <span>{locale === "fr" ? "Admission" : "Admission"}</span>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
       <main className="overflow-x-hidden">
         <section id="top" className="relative min-h-screen overflow-hidden border-b border-[rgba(201,162,39,0.16)]">
           <div
@@ -739,6 +1155,16 @@ export default function Home() {
             }}
           />
           <div className="vault-grid absolute inset-0 opacity-40" />
+          <motion.div
+            className="absolute -left-24 top-28 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(214,175,74,0.16)_0%,rgba(214,175,74,0)_70%)] blur-3xl"
+            animate={reduceMotion ? undefined : { x: [0, 26, 0], y: [0, -18, 0], opacity: [0.32, 0.6, 0.32] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute right-[-4rem] top-[22%] h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_72%)] blur-3xl"
+            animate={reduceMotion ? undefined : { x: [0, -28, 0], y: [0, 18, 0], opacity: [0.14, 0.3, 0.14] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(214,175,74,0.2),transparent_30%),radial-gradient(circle_at_70%_10%,rgba(255,255,255,0.06),transparent_20%)]" />
 
           <div className="container relative z-10 flex min-h-screen flex-col justify-between py-6 md:py-10">
@@ -774,48 +1200,74 @@ export default function Home() {
               </div>
             </header>
 
-            <div className="grid items-end gap-14 py-14 lg:grid-cols-[1.15fr_0.85fr] lg:py-20">
-              <motion.div initial="hidden" animate="visible" variants={reveal} className="max-w-3xl">
-                <div className="mb-7 inline-flex items-center gap-3 rounded-full border border-[rgba(214,175,74,0.22)] bg-black/25 px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-white/70 backdrop-blur-xl">
-                  <ShieldCheck className="h-4 w-4 text-[var(--vault-gold)]" />
-                  {t.hero.badge}
+            <div className="grid items-center gap-14 py-14 xl:grid-cols-[1.1fr_0.9fr] xl:gap-16 lg:py-20">
+              <motion.div initial="hidden" animate="visible" variants={reveal} className="relative z-20 max-w-4xl">
+                <div className="mb-7 flex justify-center xl:justify-start">
+                  <div className="inline-flex items-center gap-3 rounded-full border border-[rgba(214,175,74,0.22)] bg-black/25 px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-white/70 backdrop-blur-xl">
+                    <ShieldCheck className="h-4 w-4 text-[var(--vault-gold)]" />
+                    {t.hero.badge}
+                  </div>
                 </div>
 
-                <div className="mb-8 max-w-md">
-                  <img
-                    src={logoImage}
-                    alt="Assurances Cardone official logo"
-                    className="w-full object-contain mix-blend-screen brightness-[1.08] contrast-[1.08] drop-shadow-[0_18px_65px_rgba(214,175,74,0.16)]"
-                  />
-                </div>
+                <motion.div
+                  className="relative mb-8 flex justify-center xl:justify-start"
+                  animate={reduceMotion ? undefined : { y: [0, -10, 0] }}
+                  transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <div className="relative w-full max-w-lg">
+                    <div className="absolute inset-x-10 top-10 h-24 rounded-full bg-[radial-gradient(circle,rgba(214,175,74,0.22)_0%,rgba(214,175,74,0)_72%)] blur-3xl" />
+                    <div className="absolute inset-x-0 top-1/2 h-px bg-[linear-gradient(90deg,transparent,rgba(214,175,74,0.34),transparent)]" />
+                    <div className="relative overflow-hidden rounded-[2rem] border border-[rgba(214,175,74,0.18)] bg-[linear-gradient(180deg,rgba(20,20,20,0.78),rgba(8,8,8,0.38))] px-8 py-6 shadow-[0_24px_90px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl">
+                      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: `url(${bentoImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(214,175,74,0.16),transparent_54%)]" />
+                      <img
+                        src={logoImage}
+                        alt="Assurances Cardone official logo"
+                        className="relative z-10 mx-auto w-full max-w-[24rem] object-contain mix-blend-screen brightness-[1.08] contrast-[1.08] drop-shadow-[0_18px_65px_rgba(214,175,74,0.16)]"
+                      />
+                    </div>
+                  </div>
+                </motion.div>
 
-                <p className="vault-eyebrow mb-4">{t.hero.kicker}</p>
-                <h1 className="max-w-4xl font-display text-5xl leading-[0.94] text-[var(--vault-text)] sm:text-6xl lg:text-8xl">
-                  {t.hero.title} <span className="gold-text">{t.hero.highlight}</span>
-                </h1>
-                <p className="mt-6 max-w-2xl text-base leading-8 text-white/72 md:text-lg">{t.hero.description}</p>
+                <div className="text-center xl:text-left">
+                  <p className="vault-eyebrow mb-4">{t.hero.kicker}</p>
+                  <h1 className="mx-auto max-w-4xl font-display text-5xl leading-[0.94] text-[var(--vault-text)] sm:text-6xl lg:text-8xl xl:mx-0">
+                    {t.hero.title} <span className="gold-text">{t.hero.highlight}</span>
+                  </h1>
+                  <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/72 md:text-lg xl:mx-0">
+                    {t.hero.description}
+                  </p>
 
-                <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-                  <a href="#application-vault">
-                    <Button className="vault-button group rounded-full px-8 py-6 text-xs uppercase tracking-[0.28em]">
-                      {t.hero.primaryCta}
-                      <ArrowRight className="ml-2 h-4 w-4 transition duration-500 group-hover:translate-x-1" />
-                    </Button>
-                  </a>
-                  <a href="#services">
-                    <Button
-                      variant="outline"
-                      className="rounded-full border-[rgba(214,175,74,0.28)] bg-[rgba(18,18,18,0.62)] px-8 py-6 text-xs uppercase tracking-[0.28em] text-[var(--vault-text)] hover:bg-[rgba(214,175,74,0.08)] hover:text-[var(--vault-gold)]"
-                    >
-                      {t.hero.secondaryCta}
-                    </Button>
-                  </a>
+                  <div className="relative z-30 mt-10 flex flex-col items-center gap-4 xl:flex-row xl:items-start">
+                    <a href="#application-vault">
+                      <Button className="vault-button group rounded-full px-8 py-6 text-xs uppercase tracking-[0.28em]">
+                        {t.hero.primaryCta}
+                        <ArrowRight className="ml-2 h-4 w-4 transition duration-500 group-hover:translate-x-1" />
+                      </Button>
+                    </a>
+                    <a href="#services">
+                      <Button
+                        variant="outline"
+                        className="rounded-full border-[rgba(214,175,74,0.28)] bg-[rgba(18,18,18,0.62)] px-8 py-6 text-xs uppercase tracking-[0.28em] text-[var(--vault-text)] hover:bg-[rgba(214,175,74,0.08)] hover:text-[var(--vault-gold)]"
+                      >
+                        {t.hero.secondaryCta}
+                      </Button>
+                    </a>
+                  </div>
                 </div>
               </motion.div>
 
-              <motion.div initial="hidden" animate="visible" variants={reveal} className="relative mx-auto w-full max-w-xl lg:max-w-none">
-                <div className="vault-orb absolute -left-8 top-8 h-28 w-28 rounded-full blur-3xl" />
-                <div className="vault-panel relative overflow-hidden rounded-[2rem] p-6 md:p-8">
+              <motion.div initial="hidden" animate="visible" variants={reveal} className="relative z-10 mx-auto w-full max-w-xl pt-4 xl:max-w-none xl:pt-0">
+                <motion.div
+                  className="vault-orb absolute -left-8 top-8 h-28 w-28 rounded-full blur-3xl"
+                  animate={reduceMotion ? undefined : { scale: [1, 1.18, 1], opacity: [0.2, 0.42, 0.2] }}
+                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.div
+                  className="vault-panel relative overflow-hidden rounded-[2rem] p-6 md:p-8"
+                  animate={reduceMotion ? undefined : { y: [0, -10, 0] }}
+                  transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+                >
                   <div className="absolute inset-0 opacity-35" style={{ backgroundImage: `url(${servicesImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
                   <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.14),transparent_34%,rgba(214,175,74,0.06)_100%)]" />
                   <div className="relative space-y-8">
@@ -848,7 +1300,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             </div>
 
@@ -918,6 +1370,80 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="relative py-24 md:py-32">
+          <div className="container">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }} variants={reveal} className="mb-14 grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
+              <div>
+                <p className="vault-eyebrow">{t.companyInfo.eyebrow}</p>
+                <h2 className="mt-4 max-w-3xl font-display text-4xl leading-tight text-[var(--vault-text)] md:text-6xl">
+                  {t.companyInfo.titleStart} <span className="gold-text">{t.companyInfo.titleHighlight}</span>
+                  {t.companyInfo.titleEnd}
+                </h2>
+              </div>
+              <p className="max-w-2xl text-base leading-8 text-white/70 md:text-lg">{t.companyInfo.description}</p>
+            </motion.div>
+
+            <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+              <motion.article initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }} variants={reveal} className="vault-panel relative overflow-hidden rounded-[2rem] p-8 md:p-10">
+                <div className="vault-grid absolute inset-0 opacity-35" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(214,175,74,0.12),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(0,0,0,0.16))]" />
+                <div className="relative flex h-full flex-col justify-between gap-8">
+                  <div>
+                    <p className="vault-eyebrow">Assurances Cardone</p>
+                    <h3 className="mt-4 max-w-xl font-display text-4xl text-[var(--vault-text)] md:text-5xl">{t.companyInfo.positioning}</h3>
+                    <p className="mt-6 max-w-2xl text-base leading-8 text-white/68">
+                      {locale === "fr"
+                        ? "Le cabinet associe une présence locale très concrète à une approche de courtage où l’on compare, recommande et accompagne — y compris lorsqu’un dossier devient sensible."
+                        : "The brokerage combines a tangible local presence with a model built around comparison, recommendation, and support — including when a file becomes sensitive."}
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {t.companyInfo.details.map(([label, value]) => (
+                      <div key={label} className="rounded-[1.4rem] border border-white/8 bg-black/25 p-5 backdrop-blur-xl">
+                        <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{label}</p>
+                        <p className="mt-3 text-base leading-7 text-[var(--vault-text)]">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div>
+                    <a href="tel:+15143272040">
+                      <Button className="vault-button rounded-full px-7 py-6 text-xs uppercase tracking-[0.28em]">
+                        {t.companyInfo.callCta}
+                      </Button>
+                    </a>
+                  </div>
+                </div>
+              </motion.article>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                {t.companyInfo.principles.map((principle, index) => (
+                  <motion.article
+                    key={principle.title}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.15 }}
+                    variants={reveal}
+                    className="vault-panel group relative overflow-hidden rounded-[2rem] p-7 md:p-8"
+                  >
+                    <div className="vault-grid absolute inset-0 opacity-0 transition duration-700 group-hover:opacity-40" />
+                    <div className="relative flex h-full flex-col justify-between gap-6">
+                      <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgba(214,175,74,0.22)] bg-[rgba(214,175,74,0.08)] text-[var(--vault-gold)]">
+                        {index % 2 === 0 ? <ShieldCheck className="h-5 w-5" /> : <UserRound className="h-5 w-5" />}
+                      </div>
+                      <div>
+                        <h3 className="font-display text-3xl text-[var(--vault-text)]">{principle.title}</h3>
+                        <p className="mt-4 text-base leading-8 text-white/68">{principle.description}</p>
+                      </div>
+                    </div>
+                  </motion.article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section id="services" className="relative border-y border-[rgba(214,175,74,0.08)] py-24 md:py-32">
           <div className="container">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }} variants={reveal} className="mb-14 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -978,6 +1504,148 @@ export default function Home() {
                   </motion.div>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        <section id="broker-connector" className="relative border-y border-[rgba(214,175,74,0.08)] py-24 md:py-32">
+          <div className="container">
+            <div className="grid gap-10 lg:grid-cols-[0.84fr_1.16fr] lg:items-start">
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.12 }} variants={reveal} className="lg:sticky lg:top-10">
+                <p className="vault-eyebrow">{brokerQuoteContent.eyebrow}</p>
+                <h2 className="mt-4 max-w-3xl font-display text-4xl leading-tight text-[var(--vault-text)] md:text-6xl">
+                  {brokerQuoteContent.titleStart} <span className="gold-text">{brokerQuoteContent.titleHighlight}</span>
+                  {brokerQuoteContent.titleEnd}
+                </h2>
+                <p className="mt-6 max-w-2xl text-base leading-8 text-white/70 md:text-lg">{brokerQuoteContent.description}</p>
+
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-[1.5rem] border border-[rgba(214,175,74,0.16)] bg-black/25 p-5 backdrop-blur-xl">
+                    <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{brokerQuoteContent.baseRate}</p>
+                    <p className="mt-3 text-2xl text-[var(--vault-text)]">{formatBrokerQuoteCurrency.format(1500)}</p>
+                    <p className="mt-2 text-sm text-white/55">{locale === "fr" ? "125 $ / mois avant ajustements" : "$125 / month before adjustments"}</p>
+                  </div>
+                  <div className="rounded-[1.5rem] border border-[rgba(214,175,74,0.16)] bg-black/25 p-5 backdrop-blur-xl">
+                    <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{brokerQuoteContent.liveRateTitle}</p>
+                    <p className="mt-3 text-sm leading-7 text-white/68">{brokerQuoteContent.liveRateBody}</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.08 }} variants={reveal} className="vault-panel relative overflow-hidden rounded-[2.2rem] p-6 md:p-8 lg:p-10">
+                <div className="absolute inset-0 bg-cover bg-center opacity-12" style={{ backgroundImage: `url(${servicesImage})` }} />
+                <div className="vault-grid absolute inset-0 opacity-25" />
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_24%,rgba(214,175,74,0.06)_70%,rgba(0,0,0,0.3))]" />
+
+                <div className="relative grid gap-8 xl:grid-cols-[0.92fr_1.08fr] xl:items-start">
+                  <div className="grid gap-5">
+                    <Field label={brokerQuoteContent.labels.carModel}>
+                      <input
+                        value={brokerQuote.carModel}
+                        onChange={(event) => handleBrokerQuoteField("carModel", event.target.value)}
+                        placeholder={brokerQuoteContent.placeholders.carModel}
+                        className="vault-input"
+                      />
+                    </Field>
+                    <Field label={brokerQuoteContent.labels.driverAge}>
+                      <input
+                        value={brokerQuote.driverAge}
+                        onChange={(event) => handleBrokerQuoteField("driverAge", event.target.value)}
+                        type="number"
+                        min="16"
+                        placeholder={brokerQuoteContent.placeholders.driverAge}
+                        className="vault-input"
+                      />
+                    </Field>
+                    <Field label={brokerQuoteContent.labels.postalCode}>
+                      <input
+                        value={brokerQuote.postalCode}
+                        onChange={(event) => handleBrokerQuoteField("postalCode", event.target.value.toUpperCase())}
+                        placeholder={brokerQuoteContent.placeholders.postalCode}
+                        className="vault-input uppercase"
+                      />
+                    </Field>
+                    <Field label={brokerQuoteContent.labels.accidentCount}>
+                      <select
+                        value={brokerQuote.accidentCount}
+                        onChange={(event) => handleBrokerQuoteField("accidentCount", event.target.value)}
+                        className="vault-input"
+                      >
+                        {brokerQuoteContent.accidentOptions.map((option, index) => (
+                          <option key={option} value={index === 2 ? "2" : String(index)}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                    <a href="#application-vault" className="pt-2">
+                      <Button className="vault-button w-full rounded-full px-8 py-6 text-xs uppercase tracking-[0.26em]">
+                        {brokerQuoteContent.cta}
+                      </Button>
+                    </a>
+                  </div>
+
+                  <div className="rounded-[1.8rem] border border-[rgba(214,175,74,0.16)] bg-[rgba(8,8,8,0.58)] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl md:p-7">
+                    <p className="vault-eyebrow">{brokerQuoteContent.summaryTitle}</p>
+                    {brokerQuoteEstimate ? (
+                      <div className="mt-5 grid gap-6">
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="rounded-[1.4rem] border border-[rgba(214,175,74,0.16)] bg-black/30 p-5">
+                            <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{brokerQuoteContent.annualEstimate}</p>
+                            <p className="mt-3 font-display text-4xl text-[var(--vault-text)]">{formatBrokerQuoteCurrency.format(Math.round(brokerQuoteEstimate.annual))}</p>
+                          </div>
+                          <div className="rounded-[1.4rem] border border-[rgba(214,175,74,0.16)] bg-black/30 p-5">
+                            <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{brokerQuoteContent.monthlyEstimate}</p>
+                            <p className="mt-3 font-display text-4xl text-[var(--vault-text)]">{formatBrokerQuoteCurrency.format(Math.round(brokerQuoteEstimate.monthly))}</p>
+                          </div>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorAge}</p>
+                            <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.ageFactor.toFixed(2)}</p>
+                          </div>
+                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorVehicle}</p>
+                            <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.vehicleFactor.toFixed(2)}</p>
+                            <p className="mt-1 text-xs text-white/50">
+                              {brokerQuoteEstimate.vehicleTier === "luxury"
+                                ? brokerQuoteContent.vehicleLuxury
+                                : brokerQuoteEstimate.vehicleTier === "standard"
+                                  ? brokerQuoteContent.vehicleStandard
+                                  : brokerQuoteContent.vehicleNeutral}
+                            </p>
+                          </div>
+                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorClaims}</p>
+                            <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.claimsFactor.toFixed(2)}</p>
+                          </div>
+                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorLocation}</p>
+                            <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.locationFactor.toFixed(2)}</p>
+                            <p className="mt-1 text-xs text-white/50">
+                              {brokerQuoteEstimate.isMontreal ? brokerQuoteContent.locationMontreal : brokerQuoteContent.locationOutside}
+                            </p>
+                          </div>
+                        </div>
+
+                        {brokerQuoteEstimate.manualReview && (
+                          <div className="rounded-[1.4rem] border border-[rgba(214,175,74,0.24)] bg-[rgba(214,175,74,0.08)] p-5 text-sm leading-7 text-white/78">
+                            <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--vault-gold-soft)]">{brokerQuoteContent.manualReview}</p>
+                            <p className="mt-3">{brokerQuoteContent.manualReviewBody}</p>
+                          </div>
+                        )}
+
+                        <p className="text-sm leading-7 text-white/54">{brokerQuoteContent.disclaimer}</p>
+                      </div>
+                    ) : (
+                      <div className="mt-5 rounded-[1.4rem] border border-dashed border-[rgba(214,175,74,0.2)] bg-black/20 p-6 text-sm leading-7 text-white/58">
+                        {brokerQuoteContent.summaryPrompt}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </section>
