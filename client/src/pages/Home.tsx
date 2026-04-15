@@ -17,6 +17,7 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
+import { MapView } from "@/components/Map";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -48,6 +49,13 @@ type BrokerQuoteState = {
 };
 
 type VehicleTier = "luxury" | "standard" | "neutral";
+
+type PostalLookupState = {
+  status: "idle" | "loading" | "valid" | "outside" | "invalid" | "error";
+  normalizedPostalCode: string;
+  label: string;
+  isMontreal: boolean;
+};
 
 type VaultService = {
   title: string;
@@ -798,6 +806,13 @@ export default function Home() {
   const [showPreloader, setShowPreloader] = useState(true);
   const [form, setForm] = useState<FormState>(initialFormState);
   const [brokerQuote, setBrokerQuote] = useState<BrokerQuoteState>(initialBrokerQuoteState);
+  const [isMapsReady, setIsMapsReady] = useState(false);
+  const [postalLookup, setPostalLookup] = useState<PostalLookupState>({
+    status: "idle",
+    normalizedPostalCode: "",
+    label: "",
+    isMontreal: false,
+  });
 
   const t = content[locale];
   const brokerQuoteContent =
@@ -834,6 +849,13 @@ export default function Home() {
           accidentOptions: ["0 accident", "1 accident", "2+ accidents"],
           ticketOptions: ["0 contravention récente", "1 contravention récente", "2+ contraventions"],
           priorInsuranceOptions: ["Assuré actuellement", "Aucune couverture active", "Nouvel assuré / historique limité"],
+          lookupTitle: "Validation d’adresse en direct",
+          lookupIdle: "Entrez un code postal canadien pour lancer une vérification d’adresse en temps réel.",
+          lookupLoading: "Validation en cours du code postal auprès d’une source d’adresses publique.",
+          lookupValid: "Adresse montréalaise confirmée automatiquement.",
+          lookupOutside: "Le code postal est valide, mais l’adresse trouvée semble hors Montréal.",
+          lookupInvalid: "Aucune adresse exploitable n’a été trouvée pour ce code postal.",
+          lookupError: "La validation en direct est momentanément indisponible. L’estimation continue avec la logique locale.",
           liveRateTitle: "Taux en direct",
           liveRateBody:
             "Aucun fournisseur temps réel n’est encore connecté. Pour l’instant, la sortie affichée repose uniquement sur les règles de courtage définies pour Montréal et ses environs.",
@@ -894,6 +916,13 @@ export default function Home() {
           accidentOptions: ["0 accidents", "1 accident", "2+ accidents"],
           ticketOptions: ["0 recent tickets", "1 recent ticket", "2+ recent tickets"],
           priorInsuranceOptions: ["Currently insured", "No active coverage", "Newly insured / limited history"],
+          lookupTitle: "Live address validation",
+          lookupIdle: "Enter a Canadian postal code to trigger a real-time address check.",
+          lookupLoading: "Validating the postal code against a public address source.",
+          lookupValid: "A Montreal address has been confirmed automatically.",
+          lookupOutside: "The postal code is valid, but the matched address appears to be outside Montreal.",
+          lookupInvalid: "No usable address match was found for this postal code.",
+          lookupError: "Live validation is temporarily unavailable. The estimate is continuing with local logic.",
           liveRateTitle: "Live rates",
           liveRateBody:
             "No real-time provider is connected yet. For now, the output shown here is based only on the broker-side pricing rules defined for Montreal and surrounding areas.",
@@ -966,6 +995,103 @@ export default function Home() {
     }));
   }, [locale, t.application.step2.assetOptions, t.application.step2.contactOptions, t.application.step2.priorityOptions]);
 
+  useEffect(() => {
+    const normalizedPostalCode = brokerQuote.postalCode.replace(/\s+/g, "").toUpperCase();
+
+    if (!normalizedPostalCode) {
+      setPostalLookup({
+        status: "idle",
+        normalizedPostalCode: "",
+        label: "",
+        isMontreal: false,
+      });
+      return;
+    }
+
+    const canadianPostalCodePattern = /^[A-Z]\d[A-Z]\d[A-Z]\d$/;
+    if (!canadianPostalCodePattern.test(normalizedPostalCode)) {
+      setPostalLookup({
+        status: "invalid",
+        normalizedPostalCode,
+        label: "",
+        isMontreal: false,
+      });
+      return;
+    }
+
+    if (!isMapsReady || !window.google?.maps?.Geocoder) {
+      setPostalLookup((previous) => ({
+        ...previous,
+        status: "loading",
+        normalizedPostalCode,
+      }));
+      return;
+    }
+
+    let isCancelled = false;
+    const timeout = window.setTimeout(() => {
+      setPostalLookup((previous) => ({
+        ...previous,
+        status: "loading",
+        normalizedPostalCode,
+      }));
+
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ address: `${normalizedPostalCode}, Canada` }, (results, status) => {
+        if (isCancelled) {
+          return;
+        }
+
+        if (status !== "OK" || !results?.[0]) {
+          setPostalLookup({
+            status: "invalid",
+            normalizedPostalCode,
+            label: "",
+            isMontreal: false,
+          });
+          return;
+        }
+
+        const topResult = results[0];
+        const addressComponents = topResult.address_components ?? [];
+        const postalComponent = addressComponents.find((component) => component.types.includes("postal_code"));
+        const localityParts = addressComponents
+          .filter((component) =>
+            component.types.some((type) =>
+              ["locality", "administrative_area_level_3", "sublocality", "sublocality_level_1", "administrative_area_level_2"].includes(type),
+            ),
+          )
+          .map((component) => component.long_name)
+          .join(" ")
+          .toLowerCase();
+        const resolvedPostalCode = postalComponent?.long_name?.replace(/\s+/g, "").toUpperCase() ?? normalizedPostalCode;
+        const isMontreal = /(montreal|montréal)/.test(`${localityParts} ${topResult.formatted_address}`.toLowerCase());
+
+        if (resolvedPostalCode !== normalizedPostalCode) {
+          setPostalLookup({
+            status: "invalid",
+            normalizedPostalCode,
+            label: topResult.formatted_address,
+            isMontreal: false,
+          });
+          return;
+        }
+
+        setPostalLookup({
+          status: isMontreal ? "valid" : "outside",
+          normalizedPostalCode,
+          label: topResult.formatted_address,
+          isMontreal,
+        });
+      });
+    }, 360);
+
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(timeout);
+    };
+  }, [brokerQuote.postalCode, isMapsReady]);
+
   const stepProgress = useMemo(() => `${(activeStep / 3) * 100}%`, [activeStep]);
   const formatBrokerQuoteCurrency = useMemo(
     () =>
@@ -1001,8 +1127,10 @@ export default function Home() {
     const age = getAgeFactor(driverAge);
     const vehicle = getVehicleFactor(vehicleDescription);
     const claims = getClaimsFactor(accidentCount);
-    const location = getLocationFactor(normalizedPostalCode);
-    const annual = baseAnnual * age.factor * vehicle.factor * claims.factor * location.factor;
+    const lookupBackedLocation = postalLookup.normalizedPostalCode === normalizedPostalCode && (postalLookup.status === "valid" || postalLookup.status === "outside")
+      ? { factor: postalLookup.isMontreal ? 1.1 : 1, isMontreal: postalLookup.isMontreal }
+      : getLocationFactor(normalizedPostalCode);
+    const annual = baseAnnual * age.factor * vehicle.factor * claims.factor * lookupBackedLocation.factor;
 
     return {
       baseAnnual,
@@ -1015,12 +1143,12 @@ export default function Home() {
       ageFactor: age.factor,
       vehicleFactor: vehicle.factor,
       claimsFactor: claims.factor,
-      locationFactor: location.factor,
+      locationFactor: lookupBackedLocation.factor,
       vehicleTier: vehicle.tier,
-      isMontreal: location.isMontreal,
+      isMontreal: lookupBackedLocation.isMontreal,
       manualReview: claims.manualReview,
     };
-  }, [brokerQuote]);
+  }, [brokerQuote, postalLookup]);
 
   const handleField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((previous) => ({ ...previous, [key]: value }));
@@ -1201,6 +1329,14 @@ export default function Home() {
         ) : null}
       </AnimatePresence>
       <main className="overflow-x-hidden">
+        <div className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0" aria-hidden="true">
+          <MapView
+            className="h-0 w-0"
+            initialCenter={{ lat: 45.554, lng: -73.637 }}
+            initialZoom={10}
+            onMapReady={() => setIsMapsReady(true)}
+          />
+        </div>
         <section id="top" className="relative min-h-screen overflow-hidden border-b border-[rgba(201,162,39,0.16)]">
           <div
             className="absolute inset-0 bg-cover bg-center opacity-50"
@@ -1644,6 +1780,25 @@ export default function Home() {
                       </Field>
                     </div>
                     <div className="rounded-[1.5rem] border border-[rgba(214,175,74,0.14)] bg-black/20 p-5 backdrop-blur-xl">
+                      <div className="mb-4 rounded-[1.2rem] border border-[rgba(214,175,74,0.12)] bg-[rgba(255,255,255,0.03)] p-4">
+                        <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--vault-gold-soft)]">{brokerQuoteContent.lookupTitle}</p>
+                        <p className="mt-3 text-sm leading-7 text-white/68">
+                          {postalLookup.status === "loading"
+                            ? brokerQuoteContent.lookupLoading
+                            : postalLookup.status === "valid"
+                              ? brokerQuoteContent.lookupValid
+                              : postalLookup.status === "outside"
+                                ? brokerQuoteContent.lookupOutside
+                                : postalLookup.status === "invalid"
+                                  ? brokerQuoteContent.lookupInvalid
+                                  : postalLookup.status === "error"
+                                    ? brokerQuoteContent.lookupError
+                                    : brokerQuoteContent.lookupIdle}
+                        </p>
+                        {postalLookup.label && (
+                          <p className="mt-2 text-xs leading-6 text-white/45">{postalLookup.label}</p>
+                        )}
+                      </div>
                       <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--vault-gold-soft)]">{brokerQuoteContent.historyTitle}</p>
                       <p className="mt-3 text-sm leading-7 text-white/64">{brokerQuoteContent.historyDescription}</p>
                       <div className="mt-4 grid gap-4 sm:grid-cols-2">

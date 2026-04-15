@@ -39,3 +39,7 @@
 - [ ] Add a dedicated driver-history section to collect profile details beyond accident count.
 - [ ] Update the estimate panel to reflect the richer vehicle and driver-profile intake without breaking the current pricing rules.
 - [ ] Preserve the bilingual Digital Vault styling and application-flow continuity in the expanded quote form.
+- [ ] Add a real-time address lookup flow to validate postal codes inside the Broker Quote Connector.
+- [ ] Confirm whether the entered postal code resolves to a Montréal address and reflect that status in the premium estimator UI.
+- [ ] Preserve the bilingual Digital Vault styling while introducing live validation feedback and lookup states.
+- [ ] Keep the existing quote logic intact while enriching the postal-code field with real-time verification.

@@ -32,3 +32,10 @@ A live French-language test with `2022`, `Tesla`, `Model Y`, driver age `24`, po
 The estimator summary now reflects the richer intake by showing `2022 Tesla Model Y` as the vehicle profile and surfacing the captured driver-history details for broker review, while keeping the current automated pricing formula limited to age, vehicle category, claims count, and Montréal postal-code detection.
 
 A production build completed successfully after the expansion, with only the existing non-blocking bundle-size warning.
+
+## Postal-code lookup validation update
+
+- The Broker Quote Connector now uses the built-in Google Maps geocoder for live address validation instead of the earlier public lookup source.
+- In live preview, entering `H1H 1L5` returned a confirmed Montréal match and displayed the resolved address `Montréal-Nord, QC H1H 1L5, Canada`.
+- The quote summary remained intact while the lookup panel switched to a positive Montréal confirmation state.
+- A production build completed successfully after the integration change, with only the existing non-blocking bundle-size warning remaining.
