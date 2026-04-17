@@ -1391,111 +1391,118 @@ export default function Home() {
               </div>
             </header>
 
-            <div className="grid items-center gap-14 py-14 xl:grid-cols-[1.1fr_0.9fr] xl:gap-16 lg:py-20">
-              <motion.div initial="hidden" animate="visible" variants={reveal} className="relative z-20 max-w-4xl">
-                <div className="mb-7 flex justify-center xl:justify-start">
-                  <div className="inline-flex items-center gap-3 rounded-full border border-[rgba(214,175,74,0.22)] bg-black/25 px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-white/70 backdrop-blur-xl">
-                    <ShieldCheck className="h-4 w-4 text-[var(--vault-gold)]" />
-                    {t.hero.badge}
-                  </div>
+            <div className="relative flex min-h-[calc(100vh-10rem)] flex-col justify-center py-14 lg:py-18">
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={reveal}
+                className="relative z-20 mx-auto flex w-full max-w-5xl flex-col items-center text-center"
+              >
+                <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-[rgba(214,175,74,0.22)] bg-black/30 px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-white/70 backdrop-blur-xl">
+                  <ShieldCheck className="h-4 w-4 text-[var(--vault-gold)]" />
+                  {t.hero.badge}
                 </div>
 
                 <motion.div
-                  className="relative mb-8 flex justify-center xl:justify-start"
-                  animate={reduceMotion ? undefined : { y: [0, -10, 0] }}
-                  transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="pointer-events-none absolute left-[-12%] top-[24%] hidden w-[22rem] xl:block 2xl:left-[-8%]"
+                  animate={reduceMotion ? undefined : { y: [0, -16, 0], rotate: [-8, -4, -8] }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <div className="relative w-full max-w-lg">
-                    <div className="absolute inset-x-10 top-10 h-24 rounded-full bg-[radial-gradient(circle,rgba(214,175,74,0.22)_0%,rgba(214,175,74,0)_72%)] blur-3xl" />
-                    <div className="absolute inset-x-0 top-1/2 h-px bg-[linear-gradient(90deg,transparent,rgba(214,175,74,0.34),transparent)]" />
-                    <div className="relative overflow-hidden rounded-[2rem] border border-[rgba(214,175,74,0.18)] bg-[linear-gradient(180deg,rgba(20,20,20,0.78),rgba(8,8,8,0.38))] px-8 py-6 shadow-[0_24px_90px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl">
-                      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: `url(${bentoImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(214,175,74,0.16),transparent_54%)]" />
-                      <img
-                        src={logoImage}
-                        alt="Assurances Cardone official logo"
-                        className="relative z-10 mx-auto w-full max-w-[24rem] object-contain mix-blend-screen brightness-[1.08] contrast-[1.08] drop-shadow-[0_18px_65px_rgba(214,175,74,0.16)]"
-                      />
+                  <div className="relative overflow-hidden rounded-[2.4rem] border border-[rgba(214,175,74,0.16)] bg-[linear-gradient(180deg,rgba(14,14,14,0.8),rgba(7,7,7,0.34))] p-5 opacity-90 shadow-[0_38px_120px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.08)] [transform:perspective(1600px)_rotateY(18deg)_rotateX(7deg)]">
+                    <div className="absolute inset-0 opacity-30" style={{ backgroundImage: `url(${heroImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.12),transparent_35%,rgba(214,175,74,0.12)_100%)]" />
+                    <div className="relative aspect-[0.95] overflow-hidden rounded-[1.8rem] border border-white/10 bg-black/20">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(214,175,74,0.22),transparent_30%),linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.72))]" />
+                      <img src={logoImage} alt="Assurances Cardone official logo" className="absolute inset-x-[8%] bottom-[6%] w-[84%] object-contain mix-blend-screen brightness-[1.06] contrast-[1.04] drop-shadow-[0_24px_80px_rgba(214,175,74,0.18)]" />
                     </div>
                   </div>
                 </motion.div>
 
-                <div className="text-center xl:text-left">
-                  <p className="vault-eyebrow mb-4">{t.hero.kicker}</p>
-                  <h1 className="mx-auto max-w-4xl font-display text-5xl leading-[0.94] text-[var(--vault-text)] sm:text-6xl lg:text-8xl xl:mx-0">
-                    {t.hero.title} <span className="gold-text">{t.hero.highlight}</span>
-                  </h1>
-                  <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/72 md:text-lg xl:mx-0">
-                    {t.hero.description}
-                  </p>
-
-                  <div className="relative z-30 mt-10 flex flex-col items-center gap-4 xl:flex-row xl:items-start">
-                    <a href="#application-vault">
-                      <Button className="vault-button group rounded-full px-8 py-6 text-xs uppercase tracking-[0.28em]">
-                        {t.hero.primaryCta}
-                        <ArrowRight className="ml-2 h-4 w-4 transition duration-500 group-hover:translate-x-1" />
-                      </Button>
-                    </a>
-                    <a href="#services">
-                      <Button
-                        variant="outline"
-                        className="rounded-full border-[rgba(214,175,74,0.28)] bg-[rgba(18,18,18,0.62)] px-8 py-6 text-xs uppercase tracking-[0.28em] text-[var(--vault-text)] hover:bg-[rgba(214,175,74,0.08)] hover:text-[var(--vault-gold)]"
-                      >
-                        {t.hero.secondaryCta}
-                      </Button>
-                    </a>
+                <motion.div
+                  className="pointer-events-none absolute right-[-8%] top-[27%] hidden w-[18rem] xl:block 2xl:right-[-4%]"
+                  animate={reduceMotion ? undefined : { y: [0, 14, 0], rotate: [6, 2, 6] }}
+                  transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <div className="vault-panel overflow-hidden rounded-[2.1rem] p-5 opacity-92 [transform:perspective(1600px)_rotateY(-14deg)_rotateX(7deg)]">
+                    <div className="absolute inset-0 opacity-25" style={{ backgroundImage: `url(${servicesImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                    <div className="relative space-y-5">
+                      <div className="flex items-center justify-between border-b border-[rgba(214,175,74,0.14)] pb-4">
+                        <div>
+                          <p className="vault-eyebrow">{t.hero.overviewTitle}</p>
+                          <p className="mt-2 text-sm leading-6 text-white/64">{t.hero.sequenceDescription}</p>
+                        </div>
+                        <span className="rounded-full border border-[rgba(214,175,74,0.22)] px-3 py-1 text-[10px] uppercase tracking-[0.26em] text-white/55">{t.hero.encrypted}</span>
+                      </div>
+                      <div className="grid gap-3">
+                        {t.hero.overviewItems.slice(0, 3).map(([label, value]) => (
+                          <div key={label} className="rounded-[1.25rem] border border-white/8 bg-black/35 px-4 py-3 backdrop-blur-xl">
+                            <p className="text-[10px] uppercase tracking-[0.28em] text-white/42">{label}</p>
+                            <p className="mt-2 text-base text-[var(--vault-text)]">{value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
 
-              <motion.div initial="hidden" animate="visible" variants={reveal} className="relative z-10 mx-auto w-full max-w-xl pt-4 xl:max-w-none xl:pt-0">
                 <motion.div
-                  className="vault-orb absolute -left-8 top-8 h-28 w-28 rounded-full blur-3xl"
-                  animate={reduceMotion ? undefined : { scale: [1, 1.18, 1], opacity: [0.2, 0.42, 0.2] }}
-                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <motion.div
-                  className="vault-panel relative overflow-hidden rounded-[2rem] p-6 md:p-8"
-                  animate={reduceMotion ? undefined : { y: [0, -10, 0] }}
+                  className="pointer-events-none absolute left-1/2 top-[14%] hidden h-28 w-28 -translate-x-1/2 rounded-full border border-[rgba(214,175,74,0.28)] bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.14),transparent_34%),rgba(8,8,8,0.78)] shadow-[0_0_80px_rgba(214,175,74,0.16),inset_0_1px_0_rgba(255,255,255,0.08)] xl:flex xl:items-center xl:justify-center"
+                  animate={reduceMotion ? undefined : { y: [0, -10, 0], rotate: [0, 4, 0, -4, 0] }}
                   transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <div className="absolute inset-0 opacity-35" style={{ backgroundImage: `url(${servicesImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-                  <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.14),transparent_34%,rgba(214,175,74,0.06)_100%)]" />
-                  <div className="relative space-y-8">
-                    <div className="flex items-center justify-between border-b border-[rgba(214,175,74,0.16)] pb-5">
-                      <div>
-                        <p className="vault-eyebrow">{t.hero.badge}</p>
-                        <h2 className="mt-2 font-display text-3xl text-[var(--vault-text)]">{t.hero.overviewTitle}</h2>
-                      </div>
-                      <span className="rounded-full border border-[rgba(214,175,74,0.22)] px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white/55">
-                        {t.hero.encrypted}
-                      </span>
-                    </div>
+                  <img src={monogramImage} alt="Cardone monogram" className="h-14 w-14 object-contain" />
+                </motion.div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {t.hero.overviewItems.map(([label, value]) => (
-                        <div key={label} className="rounded-[1.4rem] border border-white/8 bg-black/35 p-4 backdrop-blur-xl">
-                          <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{label}</p>
-                          <p className="mt-3 text-lg text-[var(--vault-text)]">{value}</p>
+                <p className="vault-eyebrow mb-5">{t.hero.kicker}</p>
+                <h1 className="mx-auto max-w-4xl font-display text-5xl leading-[0.92] text-[var(--vault-text)] drop-shadow-[0_18px_50px_rgba(0,0,0,0.55)] sm:text-6xl lg:text-8xl">
+                  {t.hero.title} <span className="gold-text">{t.hero.highlight}</span>
+                </h1>
+                <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
+                  {t.hero.description}
+                </p>
+
+                <div className="relative z-30 mt-10 flex flex-col items-center gap-4 sm:flex-row">
+                  <a href="#application-vault">
+                    <Button className="vault-button group rounded-full px-8 py-6 text-xs uppercase tracking-[0.28em]">
+                      {t.hero.primaryCta}
+                      <ArrowRight className="ml-2 h-4 w-4 transition duration-500 group-hover:translate-x-1" />
+                    </Button>
+                  </a>
+                  <a href="#services">
+                    <Button
+                      variant="outline"
+                      className="rounded-full border-[rgba(214,175,74,0.28)] bg-[rgba(18,18,18,0.62)] px-8 py-6 text-xs uppercase tracking-[0.28em] text-[var(--vault-text)] hover:bg-[rgba(214,175,74,0.08)] hover:text-[var(--vault-gold)]"
+                    >
+                      {t.hero.secondaryCta}
+                    </Button>
+                  </a>
+                </div>
+
+                <div className="mt-14 w-full max-w-3xl overflow-hidden rounded-[2rem] border border-[rgba(214,175,74,0.16)] bg-[linear-gradient(180deg,rgba(16,16,16,0.78),rgba(8,8,8,0.44))] p-4 shadow-[0_36px_130px_rgba(0,0,0,0.56),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl md:p-5 xl:hidden">
+                  <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
+                    <div className="relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-black/20 p-4">
+                      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: `url(${heroImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(214,175,74,0.18),transparent_30%),linear-gradient(180deg,rgba(0,0,0,0.05),rgba(0,0,0,0.72))]" />
+                      <img src={logoImage} alt="Assurances Cardone official logo" className="relative z-10 mx-auto w-full max-w-[18rem] object-contain mix-blend-screen brightness-[1.06] contrast-[1.04] drop-shadow-[0_18px_65px_rgba(214,175,74,0.16)]" />
+                    </div>
+                    <div className="space-y-3 rounded-[1.6rem] border border-white/8 bg-black/25 p-4 backdrop-blur-xl">
+                      <div className="flex items-center justify-between border-b border-[rgba(214,175,74,0.14)] pb-3">
+                        <p className="vault-eyebrow">{t.hero.overviewTitle}</p>
+                        <span className="rounded-full border border-[rgba(214,175,74,0.22)] px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-white/55">{t.hero.encrypted}</span>
+                      </div>
+                      {t.hero.overviewItems.slice(0, 3).map(([label, value]) => (
+                        <div key={label} className="rounded-[1.1rem] border border-white/8 bg-black/35 px-4 py-3">
+                          <p className="text-[10px] uppercase tracking-[0.28em] text-white/42">{label}</p>
+                          <p className="mt-2 text-base text-[var(--vault-text)]">{value}</p>
                         </div>
                       ))}
                     </div>
-
-                    <div className="rounded-[1.5rem] border border-[rgba(214,175,74,0.18)] bg-[rgba(8,8,8,0.66)] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                      <div className="flex items-center justify-between gap-4">
-                        <div>
-                          <p className="vault-eyebrow">{t.hero.sequenceTitle}</p>
-                          <p className="mt-2 text-sm leading-7 text-white/68">{t.hero.sequenceDescription}</p>
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-[var(--vault-gold)]" />
-                      </div>
-                    </div>
                   </div>
-                </motion.div>
+                </div>
               </motion.div>
             </div>
 
-            <div className="grid gap-5 border-t border-[rgba(214,175,74,0.14)] pt-8 md:grid-cols-3">
+            <div className="mx-auto grid max-w-5xl gap-5 border-t border-[rgba(214,175,74,0.14)] pt-8 text-center md:grid-cols-3">
               {t.hero.strip.map((item) => (
                 <p key={item} className="text-sm uppercase tracking-[0.22em] text-white/42">
                   {item}

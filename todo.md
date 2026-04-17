@@ -43,3 +43,8 @@
 - [ ] Confirm whether the entered postal code resolves to a Montréal address and reflect that status in the premium estimator UI.
 - [ ] Preserve the bilingual Digital Vault styling while introducing live validation feedback and lookup states.
 - [ ] Keep the existing quote logic intact while enriching the postal-code field with real-time verification.
+- [ ] Study the Lemonade homepage hero to identify the core motion, framing, and cinematic 3D/video cues worth adapting for Assurances Cardone.
+- [ ] Redesign the Cardone hero around a video-led or faux-3D composition that feels editorial, premium, and brand-appropriate rather than a literal clone.
+- [ ] Source or generate a prominent hero visual asset that can deliver the same immersive depth as Lemonade’s hero while matching Cardone’s black-and-gold identity.
+- [ ] Rework the hero copy, layout, and calls to action so they remain legible and compelling over the new motion-driven background.
+- [ ] Validate performance, responsiveness, and text contrast after the new cinematic hero is implemented.
