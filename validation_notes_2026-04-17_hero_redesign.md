@@ -13,3 +13,9 @@ The faux-3D side panels were replaced with a real looping hero video showing a b
 After refinement, the hero uses a stronger glass-like central scrim to keep the headline and calls to action readable over the lighter video. The result feels warmer, more reassuring, and closer to the calm staged clarity requested from the Lemonade reference while still preserving Cardone’s premium tone.
 
 The updated site continues to pass production build successfully. The remaining build note is the existing non-blocking bundle-size warning.
+
+## Hero visibility simplification validation
+
+The fullscreen preloader overlay was disabled, so the user now lands directly on the actual hero instead of a blocking intro screen. The blurry glass content card was also removed from the hero composition.
+
+The live preview now shows much more of the underlying video, and the seated figure on the left is substantially more visible because the video is presented without the previous heavy crop and without the central glass panel masking it. The headline is smaller and lighter than before, which improves scene visibility while preserving readability over the brighter background.

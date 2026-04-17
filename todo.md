@@ -59,3 +59,11 @@
 - [ ] Shift the hero video palette away from heavy black-and-gold toward a brighter, happier insurance peace-of-mind atmosphere.
 - [ ] Explore white, warm daylight, soft gold, and clean premium neutrals so the hero feels reassuring rather than dark.
 - [ ] Rebalance overlays and typography against the lighter motion background to preserve contrast and readability.
+- [ ] Reduce the visual dominance of the hero typography so the background video remains clearly visible.
+- [ ] Reframe the hero video treatment so the seated person on the left is fully visible instead of cropped at the legs.
+- [ ] Adjust the central scrim, spacing, and content width so the hero feels lighter while preserving readability.
+- [ ] Validate the updated hero framing and text balance in the live preview.
+- [ ] Remove the blurry glass card from the hero so only the lettering sits over the video.
+- [ ] Further reduce text dominance so the background video remains the main visual.
+- [ ] Rebalance hero framing so the seated figure on the left is more fully visible.
+- [ ] Validate the simplified hero composition in the live preview.

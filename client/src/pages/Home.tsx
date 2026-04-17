@@ -803,7 +803,7 @@ export default function Home() {
   const [activeStep, setActiveStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [showPreloader, setShowPreloader] = useState(true);
+  const [showPreloader, setShowPreloader] = useState(false);
   const [form, setForm] = useState<FormState>(initialFormState);
   const [brokerQuote, setBrokerQuote] = useState<BrokerQuoteState>(initialBrokerQuoteState);
   const [isMapsReady, setIsMapsReady] = useState(false);
@@ -955,11 +955,6 @@ export default function Home() {
   useEffect(() => {
     document.documentElement.lang = locale === "fr" ? "fr-CA" : "en-CA";
   }, [locale]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setShowPreloader(false), reduceMotion ? 260 : 1750);
-    return () => window.clearTimeout(timer);
-  }, [reduceMotion]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -1338,21 +1333,21 @@ export default function Home() {
           />
         </div>
         <section id="top" className="relative min-h-screen overflow-hidden border-b border-[rgba(201,162,39,0.16)]">
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,#f6f1e8_0%,#efe7db_100%)]" />
           <video
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-contain object-center"
             autoPlay
             muted
             loop
             playsInline
             preload="auto"
             poster={heroImage}
-            style={{ transform: reduceMotion ? undefined : `translateY(${scrollY * 0.12}px) scale(1.03)` }}
+            style={{ transform: reduceMotion ? undefined : `translateY(${scrollY * 0.06}px) scale(1.005)` }}
           >
             <source src="https://d2xsxph8kpxj0f.cloudfront.net/310519663299064034/Cmhonn52uj4EPDPCSRW5xy/cardone-hero-peace-of-mind-loop_2e4c36ed.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,248,238,0.22)_0%,rgba(255,245,229,0.1)_16%,rgba(20,17,14,0.42)_42%,rgba(8,7,6,0.72)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.16),transparent_24%),radial-gradient(circle_at_50%_52%,rgba(13,10,8,0.34),transparent_34%),radial-gradient(circle_at_12%_50%,rgba(255,232,179,0.14),transparent_22%),radial-gradient(circle_at_88%_38%,rgba(255,255,255,0.1),transparent_18%)]" />
-          <div className="vault-grid absolute inset-0 opacity-15" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(246,241,232,0.1)_0%,rgba(246,241,232,0.04)_20%,rgba(20,17,14,0.2)_52%,rgba(8,7,6,0.42)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(255,255,255,0.08),transparent_22%),radial-gradient(circle_at_50%_56%,rgba(12,10,8,0.16),transparent_30%)]" />
 
           <div className="container relative z-10 flex min-h-screen flex-col justify-between py-6 md:py-10">
             <header className="vault-panel flex items-center justify-between gap-4 rounded-full px-4 py-3 md:px-6">
@@ -1392,9 +1387,9 @@ export default function Home() {
                 initial="hidden"
                 animate="visible"
                 variants={reveal}
-                className="relative z-20 mx-auto flex w-full max-w-5xl flex-col items-center rounded-[2.5rem] border border-white/14 bg-[linear-gradient(180deg,rgba(18,14,10,0.18),rgba(18,14,10,0.28))] px-6 py-10 text-center shadow-[0_30px_120px_rgba(10,8,6,0.26),inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[10px] md:px-10 lg:px-14"
+                className="relative z-20 mx-auto flex w-full max-w-4xl flex-col items-center px-6 py-8 text-center md:px-10 lg:px-12"
               >
-                <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-white/40 bg-[rgba(255,250,242,0.58)] px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-[#4c3b22] shadow-[0_10px_40px_rgba(78,57,18,0.08)] backdrop-blur-xl">
+                <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/45 bg-[rgba(255,250,242,0.34)] px-4 py-2 text-[10px] uppercase tracking-[0.32em] text-[#4c3b22] shadow-[0_8px_26px_rgba(78,57,18,0.06)] backdrop-blur-md">
                   <ShieldCheck className="h-4 w-4 text-[var(--vault-gold)]" />
                   {t.hero.badge}
                 </div>
@@ -1402,14 +1397,14 @@ export default function Home() {
 
 
                 <p className="vault-eyebrow mb-5 text-[rgba(255,244,225,0.82)]">{t.hero.kicker}</p>
-                <h1 className="mx-auto max-w-4xl font-display text-5xl leading-[0.94] text-[#fffaf0] drop-shadow-[0_18px_50px_rgba(0,0,0,0.42)] sm:text-6xl lg:text-8xl">
+                <h1 className="mx-auto max-w-3xl font-display text-4xl leading-[0.96] text-[#fffaf0] drop-shadow-[0_14px_36px_rgba(0,0,0,0.28)] sm:text-5xl lg:text-7xl">
                   {t.hero.title} <span className="gold-text">{t.hero.highlight}</span>
                 </h1>
-                <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-[rgba(255,248,238,0.92)] md:text-lg">
+                <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[rgba(255,248,238,0.9)] md:text-base">
                   {t.hero.description}
                 </p>
 
-                <div className="relative z-30 mt-10 flex flex-col items-center gap-4 sm:flex-row">
+                <div className="relative z-30 mt-8 flex flex-col items-center gap-4 sm:flex-row">
                   <a href="#application-vault">
                     <Button className="vault-button group rounded-full px-8 py-6 text-xs uppercase tracking-[0.28em]">
                       {t.hero.primaryCta}
@@ -1426,12 +1421,12 @@ export default function Home() {
                   </a>
                 </div>
 
-                <div className="mt-14 w-full max-w-3xl rounded-[2rem] border border-white/28 bg-[rgba(255,248,238,0.16)] p-4 shadow-[0_30px_100px_rgba(28,20,13,0.22),inset_0_1px_0_rgba(255,255,255,0.26)] backdrop-blur-2xl md:p-5">
+                <div className="mt-12 w-full max-w-3xl">
                   <div className="grid gap-3 md:grid-cols-3">
                     {t.hero.overviewItems.slice(0, 3).map(([label, value]) => (
-                      <div key={label} className="rounded-[1.2rem] border border-white/20 bg-[rgba(77,53,22,0.18)] px-4 py-4 backdrop-blur-xl">
-                        <p className="text-[10px] uppercase tracking-[0.28em] text-[rgba(255,247,235,0.68)]">{label}</p>
-                        <p className="mt-2 text-base text-[#fffaf0]">{value}</p>
+                      <div key={label} className="rounded-[1.1rem] border border-white/16 bg-[rgba(57,39,18,0.16)] px-4 py-3 shadow-[0_12px_34px_rgba(18,12,8,0.14)] backdrop-blur-sm">
+                        <p className="text-[10px] uppercase tracking-[0.26em] text-[rgba(255,247,235,0.64)]">{label}</p>
+                        <p className="mt-2 text-sm text-[#fffaf0] md:text-base">{value}</p>
                       </div>
                     ))}
                   </div>
