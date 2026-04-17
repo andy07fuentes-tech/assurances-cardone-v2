@@ -1338,25 +1338,21 @@ export default function Home() {
           />
         </div>
         <section id="top" className="relative min-h-screen overflow-hidden border-b border-[rgba(201,162,39,0.16)]">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-50"
-            style={{
-              backgroundImage: `linear-gradient(180deg, rgba(3,3,3,0.24) 0%, rgba(3,3,3,0.72) 55%, rgba(3,3,3,0.96) 100%), url(${heroImage})`,
-              transform: reduceMotion ? undefined : `translateY(${scrollY * 0.18}px) scale(1.06)`,
-            }}
-          />
-          <div className="vault-grid absolute inset-0 opacity-40" />
-          <motion.div
-            className="absolute -left-24 top-28 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(214,175,74,0.16)_0%,rgba(214,175,74,0)_70%)] blur-3xl"
-            animate={reduceMotion ? undefined : { x: [0, 26, 0], y: [0, -18, 0], opacity: [0.32, 0.6, 0.32] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute right-[-4rem] top-[22%] h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_72%)] blur-3xl"
-            animate={reduceMotion ? undefined : { x: [0, -28, 0], y: [0, 18, 0], opacity: [0.14, 0.3, 0.14] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(214,175,74,0.2),transparent_30%),radial-gradient(circle_at_70%_10%,rgba(255,255,255,0.06),transparent_20%)]" />
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster={heroImage}
+            style={{ transform: reduceMotion ? undefined : `translateY(${scrollY * 0.12}px) scale(1.03)` }}
+          >
+            <source src="https://d2xsxph8kpxj0f.cloudfront.net/310519663299064034/Cmhonn52uj4EPDPCSRW5xy/cardone-hero-peace-of-mind-loop_2e4c36ed.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,248,238,0.22)_0%,rgba(255,245,229,0.1)_16%,rgba(20,17,14,0.42)_42%,rgba(8,7,6,0.72)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.16),transparent_24%),radial-gradient(circle_at_50%_52%,rgba(13,10,8,0.34),transparent_34%),radial-gradient(circle_at_12%_50%,rgba(255,232,179,0.14),transparent_22%),radial-gradient(circle_at_88%_38%,rgba(255,255,255,0.1),transparent_18%)]" />
+          <div className="vault-grid absolute inset-0 opacity-15" />
 
           <div className="container relative z-10 flex min-h-screen flex-col justify-between py-6 md:py-10">
             <header className="vault-panel flex items-center justify-between gap-4 rounded-full px-4 py-3 md:px-6">
@@ -1396,68 +1392,20 @@ export default function Home() {
                 initial="hidden"
                 animate="visible"
                 variants={reveal}
-                className="relative z-20 mx-auto flex w-full max-w-5xl flex-col items-center text-center"
+                className="relative z-20 mx-auto flex w-full max-w-5xl flex-col items-center rounded-[2.5rem] border border-white/14 bg-[linear-gradient(180deg,rgba(18,14,10,0.18),rgba(18,14,10,0.28))] px-6 py-10 text-center shadow-[0_30px_120px_rgba(10,8,6,0.26),inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[10px] md:px-10 lg:px-14"
               >
-                <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-[rgba(214,175,74,0.22)] bg-black/30 px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-white/70 backdrop-blur-xl">
+                <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-white/40 bg-[rgba(255,250,242,0.58)] px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-[#4c3b22] shadow-[0_10px_40px_rgba(78,57,18,0.08)] backdrop-blur-xl">
                   <ShieldCheck className="h-4 w-4 text-[var(--vault-gold)]" />
                   {t.hero.badge}
                 </div>
 
-                <motion.div
-                  className="pointer-events-none absolute left-[-12%] top-[24%] hidden w-[22rem] xl:block 2xl:left-[-8%]"
-                  animate={reduceMotion ? undefined : { y: [0, -16, 0], rotate: [-8, -4, -8] }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <div className="relative overflow-hidden rounded-[2.4rem] border border-[rgba(214,175,74,0.16)] bg-[linear-gradient(180deg,rgba(14,14,14,0.8),rgba(7,7,7,0.34))] p-5 opacity-90 shadow-[0_38px_120px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.08)] [transform:perspective(1600px)_rotateY(18deg)_rotateX(7deg)]">
-                    <div className="absolute inset-0 opacity-30" style={{ backgroundImage: `url(${heroImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.12),transparent_35%,rgba(214,175,74,0.12)_100%)]" />
-                    <div className="relative aspect-[0.95] overflow-hidden rounded-[1.8rem] border border-white/10 bg-black/20">
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(214,175,74,0.22),transparent_30%),linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.72))]" />
-                      <img src={logoImage} alt="Assurances Cardone official logo" className="absolute inset-x-[8%] bottom-[6%] w-[84%] object-contain mix-blend-screen brightness-[1.06] contrast-[1.04] drop-shadow-[0_24px_80px_rgba(214,175,74,0.18)]" />
-                    </div>
-                  </div>
-                </motion.div>
 
-                <motion.div
-                  className="pointer-events-none absolute right-[-8%] top-[27%] hidden w-[18rem] xl:block 2xl:right-[-4%]"
-                  animate={reduceMotion ? undefined : { y: [0, 14, 0], rotate: [6, 2, 6] }}
-                  transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <div className="vault-panel overflow-hidden rounded-[2.1rem] p-5 opacity-92 [transform:perspective(1600px)_rotateY(-14deg)_rotateX(7deg)]">
-                    <div className="absolute inset-0 opacity-25" style={{ backgroundImage: `url(${servicesImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-                    <div className="relative space-y-5">
-                      <div className="flex items-center justify-between border-b border-[rgba(214,175,74,0.14)] pb-4">
-                        <div>
-                          <p className="vault-eyebrow">{t.hero.overviewTitle}</p>
-                          <p className="mt-2 text-sm leading-6 text-white/64">{t.hero.sequenceDescription}</p>
-                        </div>
-                        <span className="rounded-full border border-[rgba(214,175,74,0.22)] px-3 py-1 text-[10px] uppercase tracking-[0.26em] text-white/55">{t.hero.encrypted}</span>
-                      </div>
-                      <div className="grid gap-3">
-                        {t.hero.overviewItems.slice(0, 3).map(([label, value]) => (
-                          <div key={label} className="rounded-[1.25rem] border border-white/8 bg-black/35 px-4 py-3 backdrop-blur-xl">
-                            <p className="text-[10px] uppercase tracking-[0.28em] text-white/42">{label}</p>
-                            <p className="mt-2 text-base text-[var(--vault-text)]">{value}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
 
-                <motion.div
-                  className="pointer-events-none absolute left-1/2 top-[14%] hidden h-28 w-28 -translate-x-1/2 rounded-full border border-[rgba(214,175,74,0.28)] bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.14),transparent_34%),rgba(8,8,8,0.78)] shadow-[0_0_80px_rgba(214,175,74,0.16),inset_0_1px_0_rgba(255,255,255,0.08)] xl:flex xl:items-center xl:justify-center"
-                  animate={reduceMotion ? undefined : { y: [0, -10, 0], rotate: [0, 4, 0, -4, 0] }}
-                  transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <img src={monogramImage} alt="Cardone monogram" className="h-14 w-14 object-contain" />
-                </motion.div>
-
-                <p className="vault-eyebrow mb-5">{t.hero.kicker}</p>
-                <h1 className="mx-auto max-w-4xl font-display text-5xl leading-[0.92] text-[var(--vault-text)] drop-shadow-[0_18px_50px_rgba(0,0,0,0.55)] sm:text-6xl lg:text-8xl">
+                <p className="vault-eyebrow mb-5 text-[rgba(255,244,225,0.82)]">{t.hero.kicker}</p>
+                <h1 className="mx-auto max-w-4xl font-display text-5xl leading-[0.94] text-[#fffaf0] drop-shadow-[0_18px_50px_rgba(0,0,0,0.42)] sm:text-6xl lg:text-8xl">
                   {t.hero.title} <span className="gold-text">{t.hero.highlight}</span>
                 </h1>
-                <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
+                <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-[rgba(255,248,238,0.92)] md:text-lg">
                   {t.hero.description}
                 </p>
 
@@ -1471,32 +1419,21 @@ export default function Home() {
                   <a href="#services">
                     <Button
                       variant="outline"
-                      className="rounded-full border-[rgba(214,175,74,0.28)] bg-[rgba(18,18,18,0.62)] px-8 py-6 text-xs uppercase tracking-[0.28em] text-[var(--vault-text)] hover:bg-[rgba(214,175,74,0.08)] hover:text-[var(--vault-gold)]"
+                      className="rounded-full border-white/50 bg-[rgba(255,249,242,0.16)] px-8 py-6 text-xs uppercase tracking-[0.28em] text-[#fffaf0] backdrop-blur-xl hover:bg-[rgba(255,249,242,0.28)] hover:text-[#fff7df]"
                     >
                       {t.hero.secondaryCta}
                     </Button>
                   </a>
                 </div>
 
-                <div className="mt-14 w-full max-w-3xl overflow-hidden rounded-[2rem] border border-[rgba(214,175,74,0.16)] bg-[linear-gradient(180deg,rgba(16,16,16,0.78),rgba(8,8,8,0.44))] p-4 shadow-[0_36px_130px_rgba(0,0,0,0.56),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl md:p-5 xl:hidden">
-                  <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
-                    <div className="relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-black/20 p-4">
-                      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: `url(${heroImage})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(214,175,74,0.18),transparent_30%),linear-gradient(180deg,rgba(0,0,0,0.05),rgba(0,0,0,0.72))]" />
-                      <img src={logoImage} alt="Assurances Cardone official logo" className="relative z-10 mx-auto w-full max-w-[18rem] object-contain mix-blend-screen brightness-[1.06] contrast-[1.04] drop-shadow-[0_18px_65px_rgba(214,175,74,0.16)]" />
-                    </div>
-                    <div className="space-y-3 rounded-[1.6rem] border border-white/8 bg-black/25 p-4 backdrop-blur-xl">
-                      <div className="flex items-center justify-between border-b border-[rgba(214,175,74,0.14)] pb-3">
-                        <p className="vault-eyebrow">{t.hero.overviewTitle}</p>
-                        <span className="rounded-full border border-[rgba(214,175,74,0.22)] px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-white/55">{t.hero.encrypted}</span>
+                <div className="mt-14 w-full max-w-3xl rounded-[2rem] border border-white/28 bg-[rgba(255,248,238,0.16)] p-4 shadow-[0_30px_100px_rgba(28,20,13,0.22),inset_0_1px_0_rgba(255,255,255,0.26)] backdrop-blur-2xl md:p-5">
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {t.hero.overviewItems.slice(0, 3).map(([label, value]) => (
+                      <div key={label} className="rounded-[1.2rem] border border-white/20 bg-[rgba(77,53,22,0.18)] px-4 py-4 backdrop-blur-xl">
+                        <p className="text-[10px] uppercase tracking-[0.28em] text-[rgba(255,247,235,0.68)]">{label}</p>
+                        <p className="mt-2 text-base text-[#fffaf0]">{value}</p>
                       </div>
-                      {t.hero.overviewItems.slice(0, 3).map(([label, value]) => (
-                        <div key={label} className="rounded-[1.1rem] border border-white/8 bg-black/35 px-4 py-3">
-                          <p className="text-[10px] uppercase tracking-[0.28em] text-white/42">{label}</p>
-                          <p className="mt-2 text-base text-[var(--vault-text)]">{value}</p>
-                        </div>
-                      ))}
-                    </div>
+                    ))}
                   </div>
                 </div>
               </motion.div>

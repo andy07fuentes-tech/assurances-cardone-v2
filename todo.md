@@ -48,3 +48,14 @@
 - [ ] Source or generate a prominent hero visual asset that can deliver the same immersive depth as Lemonade’s hero while matching Cardone’s black-and-gold identity.
 - [ ] Rework the hero copy, layout, and calls to action so they remain legible and compelling over the new motion-driven background.
 - [ ] Validate performance, responsiveness, and text contrast after the new cinematic hero is implemented.
+- [ ] Replace the hero’s faux-3D side panels with a real looping black-and-gold video treatment.
+- [ ] Create or source a premium looping motion asset that feels luxurious, atmospheric, and compatible with Cardone’s black-and-gold identity.
+- [ ] Integrate the looping video into the hero without reducing headline legibility or CTA clarity.
+- [ ] Validate autoplay, loop behavior, responsiveness, and performance after the hero video is added.
+- [ ] Replace the staged hero treatment with a silent seamless 6–8 second full-background video.
+- [ ] Design the motion scene around insurance peace of mind with a premium house, car, calm human presence, and dog.
+- [ ] Keep the video in a black-and-gold cinematic palette that feels closer to Lemonade’s calm staged hero structure than to a loud ad spot.
+- [ ] Preserve headline readability and CTA clarity over the moving background with appropriate overlays and contrast treatment.
+- [ ] Shift the hero video palette away from heavy black-and-gold toward a brighter, happier insurance peace-of-mind atmosphere.
+- [ ] Explore white, warm daylight, soft gold, and clean premium neutrals so the hero feels reassuring rather than dark.
+- [ ] Rebalance overlays and typography against the lighter motion background to preserve contrast and readability.
