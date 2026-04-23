@@ -1,9 +1,9 @@
-import { MapView } from "@/components/Map";
+import { loadMapScript } from "@/components/Map";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { trpc } from "@/lib/trpc";
 import { ArrowRight, CheckCircle2, Loader2, ShieldCheck, Sparkles } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type Locale = "fr" | "en";
@@ -29,6 +29,13 @@ type PostalLookupState = {
   normalizedPostalCode: string;
   label: string;
   isMontreal: boolean;
+};
+
+type AddressSuggestion = {
+  description: string;
+  placeId: string;
+  mainText: string;
+  secondaryText: string;
 };
 
 type Props = {
@@ -118,6 +125,7 @@ const copy = {
       ticketCount: "Infractions récentes",
       priorInsurance: "Couverture antérieure",
       historyNotes: "Notes du dossier",
+      addressSearch: "Recherche d’adresse",
     },
     placeholders: {
       fullName: "Ex. Pablo Martinez",
@@ -127,9 +135,13 @@ const copy = {
       driverAge: "34",
       postalCode: "H1H 1L5",
       historyNotes: "Ajoutez les détails utiles pour le courtier : usage professionnel, conducteur secondaire, suspension passée, etc.",
+      addressSearch: "Commencez à taper une adresse au Québec",
     },
     loadingMakes: "Chargement des marques…",
     loadingModels: "Chargement des modèles…",
+    loadingAddresses: "Recherche des adresses…",
+    noAddresses: "Aucune adresse trouvée pour cette recherche.",
+    addressHint: "Choisir une suggestion remplit automatiquement la ville et le code postal.",
     selectYearFirst: "Choisissez d’abord une année",
     selectMakeFirst: "Choisissez d’abord une marque",
     noMakes: "Aucune marque trouvée",
@@ -198,6 +210,7 @@ const copy = {
       ticketCount: "Recent tickets",
       priorInsurance: "Prior coverage",
       historyNotes: "Broker notes",
+      addressSearch: "Address search",
     },
     placeholders: {
       fullName: "E.g. Pablo Martinez",
@@ -207,9 +220,13 @@ const copy = {
       driverAge: "34",
       postalCode: "H1H 1L5",
       historyNotes: "Add useful broker context such as business use, a secondary driver, prior suspension, or special underwriting notes.",
+      addressSearch: "Start typing a Quebec address",
     },
     loadingMakes: "Loading makes…",
     loadingModels: "Loading models…",
+    loadingAddresses: "Searching addresses…",
+    noAddresses: "No addresses found for this search.",
+    addressHint: "Choosing a suggestion auto-fills the city and postal code.",
     selectYearFirst: "Select a year first",
     selectMakeFirst: "Select a make first",
     noMakes: "No makes found",
@@ -301,6 +318,28 @@ function getLocationFactor(postalCode: string) {
   };
 }
 
+function getAddressComponent(result: google.maps.GeocoderResult, type: string) {
+  return result.address_components?.find((component) => component.types.includes(type))?.long_name ?? "";
+}
+
+function resolveSelectedAddress(result: google.maps.GeocoderResult) {
+  const city =
+    getAddressComponent(result, "locality") ||
+    getAddressComponent(result, "administrative_area_level_3") ||
+    getAddressComponent(result, "sublocality") ||
+    getAddressComponent(result, "administrative_area_level_2");
+  const postalCode = getAddressComponent(result, "postal_code");
+  const normalizedLocality = `${city} ${result.formatted_address}`.toLowerCase();
+  const isMontreal = /(montreal|montréal)/.test(normalizedLocality);
+
+  return {
+    city,
+    postalCode,
+    formattedAddress: result.formatted_address,
+    isMontreal,
+  };
+}
+
 function Field({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
   return (
     <label className={className}>
@@ -320,6 +359,12 @@ export default function BrokerQuoteConnector({ locale }: Props) {
     isMontreal: false,
   });
   const [isMapsReady, setIsMapsReady] = useState(false);
+  const [addressQuery, setAddressQuery] = useState("");
+  const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
+  const [isAddressSearching, setIsAddressSearching] = useState(false);
+  const [isAddressFieldFocused, setIsAddressFieldFocused] = useState(false);
+  const autocompleteServiceRef = useRef<google.maps.places.AutocompleteService | null>(null);
+  const blurTimeoutRef = useRef<number | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const yearsQuery = trpc.quote.getVehicleYears.useQuery();
@@ -341,6 +386,27 @@ export default function BrokerQuoteConnector({ locale }: Props) {
       toast.error(t.error);
     },
   });
+
+  useEffect(() => {
+    let active = true;
+
+    loadMapScript()
+      .then(() => {
+        if (!active) return;
+        setIsMapsReady(true);
+      })
+      .catch(() => {
+        if (!active) return;
+        setPostalLookup((current) => ({ ...current, status: "error" }));
+      });
+
+    return () => {
+      active = false;
+      if (blurTimeoutRef.current) {
+        window.clearTimeout(blurTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const formatCurrency = useMemo(
     () =>
@@ -365,6 +431,69 @@ export default function BrokerQuoteConnector({ locale }: Props) {
           : "",
     }));
   }, [makesQuery.data, modelsQuery.data]);
+
+  useEffect(() => {
+    if (!isMapsReady || !window.google?.maps?.places?.AutocompleteService) {
+      return;
+    }
+
+    autocompleteServiceRef.current ??= new window.google.maps.places.AutocompleteService();
+  }, [isMapsReady]);
+
+  useEffect(() => {
+    const trimmedQuery = addressQuery.trim();
+
+    if (!trimmedQuery || trimmedQuery.length < 3) {
+      setAddressSuggestions([]);
+      setIsAddressSearching(false);
+      return;
+    }
+
+    if (!isMapsReady || !window.google?.maps?.places?.AutocompleteService) {
+      return;
+    }
+
+    const autocompleteService =
+      autocompleteServiceRef.current ??
+      new window.google.maps.places.AutocompleteService();
+    autocompleteServiceRef.current = autocompleteService;
+
+    let cancelled = false;
+    setIsAddressSearching(true);
+
+    autocompleteService.getPlacePredictions(
+      {
+        input: trimmedQuery,
+        componentRestrictions: { country: "ca" },
+        types: ["address"],
+      },
+      (predictions, status) => {
+        if (cancelled) return;
+
+        const okStatus = window.google.maps.places.PlacesServiceStatus.OK;
+        const zeroResultsStatus = window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS;
+        if (status !== okStatus && status !== zeroResultsStatus) {
+          setAddressSuggestions([]);
+          setIsAddressSearching(false);
+          return;
+        }
+
+        setAddressSuggestions(
+          (predictions ?? []).map((prediction) => ({
+            description: prediction.description,
+            placeId: prediction.place_id,
+            mainText: prediction.structured_formatting?.main_text ?? prediction.description,
+            secondaryText: prediction.structured_formatting?.secondary_text ?? "",
+          })),
+        );
+        setIsAddressSearching(false);
+      },
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [addressQuery, isMapsReady]);
 
   useEffect(() => {
     const normalizedPostalCode = form.postalCode.replace(/\s+/g, "").toUpperCase();
@@ -478,6 +607,54 @@ export default function BrokerQuoteConnector({ locale }: Props) {
     setForm((current) => ({ ...current, vehicleYear: value, vehicleMake: "", vehicleModel: "" }));
   };
 
+  const handleAddressQueryChange = (value: string) => {
+    setSaveSuccess(false);
+    setAddressQuery(value);
+    setIsAddressFieldFocused(true);
+
+    if (!value.trim()) {
+      setAddressSuggestions([]);
+    }
+  };
+
+  const handleAddressSelect = (suggestion: AddressSuggestion) => {
+    if (!window.google?.maps?.Geocoder) {
+      return;
+    }
+
+    setSaveSuccess(false);
+    setAddressQuery(suggestion.description);
+    setAddressSuggestions([]);
+    setIsAddressFieldFocused(false);
+
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ placeId: suggestion.placeId }, (results, status) => {
+      if (status !== "OK" || !results?.[0]) {
+        toast.error(t.lookupError);
+        return;
+      }
+
+      const resolvedAddress = resolveSelectedAddress(results[0]);
+      setForm((current) => ({
+        ...current,
+        city: resolvedAddress.city || current.city,
+        postalCode: resolvedAddress.postalCode || current.postalCode,
+      }));
+      setPostalLookup({
+        status: resolvedAddress.isMontreal ? "valid" : "outside",
+        normalizedPostalCode: resolvedAddress.postalCode.replace(/\s+/g, "").toUpperCase(),
+        label: resolvedAddress.formattedAddress,
+        isMontreal: resolvedAddress.isMontreal,
+      });
+    });
+  };
+
+  const handleAddressInputBlur = () => {
+    blurTimeoutRef.current = window.setTimeout(() => {
+      setIsAddressFieldFocused(false);
+    }, 120);
+  };
+
   const handleMakeChange = (value: string) => {
     setSaveSuccess(false);
     setForm((current) => ({ ...current, vehicleMake: value, vehicleModel: "" }));
@@ -519,7 +696,7 @@ export default function BrokerQuoteConnector({ locale }: Props) {
       phone: form.phone,
       city: form.city,
       postalCode: form.postalCode.toUpperCase(),
-      validatedAddress: postalLookup.label || undefined,
+      validatedAddress: postalLookup.label || addressQuery.trim() || undefined,
       driverAge: Number(form.driverAge),
       accidentCount: Number(form.accidentCount),
       ticketCount: Number(form.ticketCount),
@@ -563,9 +740,6 @@ export default function BrokerQuoteConnector({ locale }: Props) {
           <motion.div initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="relative overflow-hidden rounded-[2.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.94),rgba(3,7,18,0.98))] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)] md:p-8 lg:p-10">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(148,163,184,0.16),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_34%)]" />
             <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:30px_30px]" />
-            <div className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0" aria-hidden="true">
-              <MapView className="h-0 w-0" initialCenter={{ lat: 45.554, lng: -73.637 }} initialZoom={10} onMapReady={() => setIsMapsReady(true)} />
-            </div>
 
             <div className="relative grid gap-8 xl:grid-cols-[0.96fr_1.04fr]">
               <div className="grid gap-5">
@@ -587,6 +761,43 @@ export default function BrokerQuoteConnector({ locale }: Props) {
                     </Field>
                     <Field label={t.labels.phone}>
                       <input value={form.phone} onChange={(event) => handleField("phone", event.target.value)} placeholder={t.placeholders.phone} className="vault-input border-white/10 bg-[rgba(255,255,255,0.04)] text-white placeholder:text-slate-500" />
+                    </Field>
+                    <Field label={t.labels.addressSearch} className="md:col-span-2">
+                      <div className="relative">
+                        <input
+                          value={addressQuery}
+                          onChange={(event) => handleAddressQueryChange(event.target.value)}
+                          onFocus={() => setIsAddressFieldFocused(true)}
+                          onBlur={handleAddressInputBlur}
+                          placeholder={t.placeholders.addressSearch}
+                          className="vault-input border-white/10 bg-[rgba(255,255,255,0.04)] text-white placeholder:text-slate-500"
+                          autoComplete="off"
+                        />
+                        {isAddressFieldFocused && addressQuery.trim().length >= 3 ? (
+                          <div className="absolute left-0 right-0 top-[calc(100%+0.75rem)] z-20 overflow-hidden rounded-[1.3rem] border border-white/10 bg-[rgba(2,6,23,0.96)] shadow-[0_24px_50px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+                            {isAddressSearching ? (
+                              <div className="px-4 py-3 text-sm text-slate-300">{t.loadingAddresses}</div>
+                            ) : addressSuggestions.length ? (
+                              <div className="max-h-72 overflow-y-auto py-2">
+                                {addressSuggestions.map((suggestion) => (
+                                  <button
+                                    key={suggestion.placeId}
+                                    type="button"
+                                    onMouseDown={() => handleAddressSelect(suggestion)}
+                                    className="flex w-full flex-col px-4 py-3 text-left transition hover:bg-white/6"
+                                  >
+                                    <span className="text-sm text-white">{suggestion.mainText}</span>
+                                    {suggestion.secondaryText ? <span className="mt-1 text-xs text-slate-400">{suggestion.secondaryText}</span> : null}
+                                  </button>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="px-4 py-3 text-sm text-slate-400">{t.noAddresses}</div>
+                            )}
+                          </div>
+                        ) : null}
+                      </div>
+                      <p className="mt-3 text-xs leading-6 text-slate-500">{t.addressHint}</p>
                     </Field>
                     <Field label={t.labels.city} className="md:col-span-2">
                       <input value={form.city} onChange={(event) => handleField("city", event.target.value)} placeholder={t.placeholders.city} className="vault-input border-white/10 bg-[rgba(255,255,255,0.04)] text-white placeholder:text-slate-500" />

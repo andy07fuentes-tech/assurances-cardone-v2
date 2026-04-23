@@ -79,3 +79,6 @@
 - [x] Validate API-driven dropdown behavior, submission flow, and saved records end to end.
 - [x] Fix Home page runtime error where useAuth is referenced without a valid import and validate the repaired homepage load.
 - [x] Fix the homepage broker connector so Google Maps JavaScript loads only once and no duplicate Maps API console error appears.
+- [x] Add an address search bar to the broker quote form with live autocomplete suggestions as the user types.
+- [x] Connect the address autocomplete selection to the quote form fields without reintroducing duplicate Google Maps loading.
+- [x] Validate the new address autocomplete behavior with focused tests and live browser verification.

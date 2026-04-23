@@ -11,7 +11,8 @@
  *   initialZoom={15}
  *   onMapReady={(map) => {
  *     mapRef.current = map; // Store to control map from parent anytime, google map itself is in charge of the re-rendering, not react state.
- * </MapView>
+ *   }}
+ * />
  *
  * ======
  * Available Libraries and Core Features:
@@ -91,22 +92,46 @@ const FORGE_BASE_URL =
   import.meta.env.VITE_FRONTEND_FORGE_API_URL ||
   "https://forge.butterfly-effect.dev";
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
+const SCRIPT_SELECTOR = 'script[data-manus-google-maps="true"]';
 
-function loadMapScript() {
-  return new Promise(resolve => {
+let mapsScriptPromise: Promise<void> | null = null;
+
+export function loadMapScript() {
+  if (window.google?.maps) {
+    return Promise.resolve();
+  }
+
+  if (mapsScriptPromise) {
+    return mapsScriptPromise;
+  }
+
+  mapsScriptPromise = new Promise<void>((resolve, reject) => {
+    const existingScript = document.querySelector<HTMLScriptElement>(SCRIPT_SELECTOR);
+
+    if (existingScript) {
+      existingScript.addEventListener("load", () => resolve(), { once: true });
+      existingScript.addEventListener("error", () => {
+        mapsScriptPromise = null;
+        reject(new Error("Failed to load Google Maps script"));
+      }, { once: true });
+      return;
+    }
+
     const script = document.createElement("script");
     script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
     script.async = true;
     script.crossOrigin = "anonymous";
-    script.onload = () => {
-      resolve(null);
-      script.remove(); // Clean up immediately
-    };
+    script.dataset.manusGoogleMaps = "true";
+    script.onload = () => resolve();
     script.onerror = () => {
+      mapsScriptPromise = null;
       console.error("Failed to load Google Maps script");
+      reject(new Error("Failed to load Google Maps script"));
     };
     document.head.appendChild(script);
   });
+
+  return mapsScriptPromise;
 }
 
 interface MapViewProps {
