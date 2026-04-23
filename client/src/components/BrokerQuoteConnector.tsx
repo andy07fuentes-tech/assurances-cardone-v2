@@ -1,5 +1,6 @@
 import { MapView } from "@/components/Map";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import { trpc } from "@/lib/trpc";
 import { ArrowRight, CheckCircle2, Loader2, ShieldCheck, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";

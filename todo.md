@@ -72,9 +72,9 @@
 - [ ] Prepare a complete handoff path so the user can retrieve both the codebase and the hero media asset together.
 - [ ] Study the provided YouTube quote-form reference and adapt its structure and interaction rhythm for the Cardone experience.
 - [ ] Upgrade the project to support internal database storage for quote submissions.
-- [ ] Replace the static vehicle fields with three linked dropdowns for Year, Make, and Model.
-- [ ] Connect the vehicle dropdowns to the NHTSA vPIC API so Makes load after Year selection and Models load after Make selection.
-- [ ] Persist quote submissions to the internal database with the selected vehicle data and driver profile.
-- [ ] Restyle the quote form with a premium dark interface and metallic silver accents while keeping the broader site coherent.
-- [ ] Validate API-driven dropdown behavior, submission flow, and saved records end to end.
+- [x] Replace the static vehicle fields with three linked dropdowns for Year, Make, and Model.
+- [x] Connect the vehicle dropdowns to the NHTSA vPIC API so Makes load after Year selection and Models load after Make selection.
+- [x] Persist quote submissions to the internal database with the selected vehicle data and driver profile.
+- [x] Restyle the quote form with a premium dark interface and metallic silver accents while keeping the broader site coherent.
+- [x] Validate API-driven dropdown behavior, submission flow, and saved records end to end.
 - [x] Fix Home page runtime error where useAuth is referenced without a valid import and validate the repaired homepage load.

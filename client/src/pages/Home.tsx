@@ -6,6 +6,7 @@ and motion that feels like systems authenticating rather than generic SaaS anima
 */
 
 import { Button } from "@/components/ui/button";
+import BrokerQuoteConnector from "@/components/BrokerQuoteConnector";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
 import {
   ArrowRight,
@@ -1365,7 +1366,7 @@ export default function Home() {
                 <nav className="flex items-center gap-6 text-xs uppercase tracking-[0.28em] text-white/65">
                   <a href="#legacy" className="transition hover:text-[var(--vault-gold)]">{t.nav.legacy}</a>
                   <a href="#services" className="transition hover:text-[var(--vault-gold)]">{t.nav.services}</a>
-                  <a href="#application-vault" className="transition hover:text-[var(--vault-gold)]">{t.nav.application}</a>
+                  <a href="#broker-connector" className="transition hover:text-[var(--vault-gold)]">{t.nav.application}</a>
                 </nav>
                 <LanguageToggle locale={locale} onChange={switchLocale} frLabel={t.nav.toggleFr} enLabel={t.nav.toggleEn} />
               </div>
@@ -1374,7 +1375,7 @@ export default function Home() {
                 <div className="lg:hidden">
                   <LanguageToggle locale={locale} onChange={switchLocale} frLabel={t.nav.toggleFr} enLabel={t.nav.toggleEn} />
                 </div>
-                <a href="#application-vault">
+                <a href="#broker-connector">
                   <Button className="vault-button rounded-full px-4 py-5 text-[11px] uppercase tracking-[0.26em] md:px-6">
                     {t.nav.secureQuote}
                   </Button>
@@ -1405,7 +1406,7 @@ export default function Home() {
                 </p>
 
                 <div className="relative z-30 mt-8 flex flex-col items-center gap-4 sm:flex-row">
-                  <a href="#application-vault">
+                  <a href="#broker-connector">
                     <Button className="vault-button group rounded-full px-8 py-6 text-xs uppercase tracking-[0.28em]">
                       {t.hero.primaryCta}
                       <ArrowRight className="ml-2 h-4 w-4 transition duration-500 group-hover:translate-x-1" />
@@ -1637,247 +1638,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <BrokerQuoteConnector locale={locale} />
 
-        <section id="broker-connector" className="relative border-y border-[rgba(214,175,74,0.08)] py-24 md:py-32">
-          <div className="container">
-            <div className="grid gap-10 lg:grid-cols-[0.84fr_1.16fr] lg:items-start">
-              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.12 }} variants={reveal} className="lg:sticky lg:top-10">
-                <p className="vault-eyebrow">{brokerQuoteContent.eyebrow}</p>
-                <h2 className="mt-4 max-w-3xl font-display text-4xl leading-tight text-[var(--vault-text)] md:text-6xl">
-                  {brokerQuoteContent.titleStart} <span className="gold-text">{brokerQuoteContent.titleHighlight}</span>
-                  {brokerQuoteContent.titleEnd}
-                </h2>
-                <p className="mt-6 max-w-2xl text-base leading-8 text-white/70 md:text-lg">{brokerQuoteContent.description}</p>
 
-                <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-[1.5rem] border border-[rgba(214,175,74,0.16)] bg-black/25 p-5 backdrop-blur-xl">
-                    <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{brokerQuoteContent.baseRate}</p>
-                    <p className="mt-3 text-2xl text-[var(--vault-text)]">{formatBrokerQuoteCurrency.format(1500)}</p>
-                    <p className="mt-2 text-sm text-white/55">{locale === "fr" ? "125 $ / mois avant ajustements" : "$125 / month before adjustments"}</p>
-                  </div>
-                  <div className="rounded-[1.5rem] border border-[rgba(214,175,74,0.16)] bg-black/25 p-5 backdrop-blur-xl">
-                    <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{brokerQuoteContent.liveRateTitle}</p>
-                    <p className="mt-3 text-sm leading-7 text-white/68">{brokerQuoteContent.liveRateBody}</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.08 }} variants={reveal} className="vault-panel relative overflow-hidden rounded-[2.2rem] p-6 md:p-8 lg:p-10">
-                <div className="absolute inset-0 bg-cover bg-center opacity-12" style={{ backgroundImage: `url(${servicesImage})` }} />
-                <div className="vault-grid absolute inset-0 opacity-25" />
-                <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_24%,rgba(214,175,74,0.06)_70%,rgba(0,0,0,0.3))]" />
-
-                <div className="relative grid gap-8 xl:grid-cols-[0.92fr_1.08fr] xl:items-start">
-                  <div className="grid gap-5">
-                    <div className="grid gap-4 sm:grid-cols-[0.62fr_1fr]">
-                      <Field label={brokerQuoteContent.labels.vehicleYear}>
-                        <input
-                          value={brokerQuote.vehicleYear}
-                          onChange={(event) => handleBrokerQuoteField("vehicleYear", event.target.value)}
-                          type="number"
-                          min="1990"
-                          max="2035"
-                          placeholder={brokerQuoteContent.placeholders.vehicleYear}
-                          className="vault-input"
-                        />
-                      </Field>
-                      <Field label={brokerQuoteContent.labels.vehicleMake}>
-                        <input
-                          value={brokerQuote.vehicleMake}
-                          onChange={(event) => handleBrokerQuoteField("vehicleMake", event.target.value)}
-                          placeholder={brokerQuoteContent.placeholders.vehicleMake}
-                          className="vault-input"
-                        />
-                      </Field>
-                    </div>
-                    <Field label={brokerQuoteContent.labels.vehicleModel}>
-                      <input
-                        value={brokerQuote.vehicleModel}
-                        onChange={(event) => handleBrokerQuoteField("vehicleModel", event.target.value)}
-                        placeholder={brokerQuoteContent.placeholders.vehicleModel}
-                        className="vault-input"
-                      />
-                    </Field>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label={brokerQuoteContent.labels.driverAge}>
-                        <input
-                          value={brokerQuote.driverAge}
-                          onChange={(event) => handleBrokerQuoteField("driverAge", event.target.value)}
-                          type="number"
-                          min="16"
-                          placeholder={brokerQuoteContent.placeholders.driverAge}
-                          className="vault-input"
-                        />
-                      </Field>
-                      <Field label={brokerQuoteContent.labels.postalCode}>
-                        <input
-                          value={brokerQuote.postalCode}
-                          onChange={(event) => handleBrokerQuoteField("postalCode", event.target.value.toUpperCase())}
-                          placeholder={brokerQuoteContent.placeholders.postalCode}
-                          className="vault-input uppercase"
-                        />
-                      </Field>
-                    </div>
-                    <div className="rounded-[1.5rem] border border-[rgba(214,175,74,0.14)] bg-black/20 p-5 backdrop-blur-xl">
-                      <div className="mb-4 rounded-[1.2rem] border border-[rgba(214,175,74,0.12)] bg-[rgba(255,255,255,0.03)] p-4">
-                        <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--vault-gold-soft)]">{brokerQuoteContent.lookupTitle}</p>
-                        <p className="mt-3 text-sm leading-7 text-white/68">
-                          {postalLookup.status === "loading"
-                            ? brokerQuoteContent.lookupLoading
-                            : postalLookup.status === "valid"
-                              ? brokerQuoteContent.lookupValid
-                              : postalLookup.status === "outside"
-                                ? brokerQuoteContent.lookupOutside
-                                : postalLookup.status === "invalid"
-                                  ? brokerQuoteContent.lookupInvalid
-                                  : postalLookup.status === "error"
-                                    ? brokerQuoteContent.lookupError
-                                    : brokerQuoteContent.lookupIdle}
-                        </p>
-                        {postalLookup.label && (
-                          <p className="mt-2 text-xs leading-6 text-white/45">{postalLookup.label}</p>
-                        )}
-                      </div>
-                      <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--vault-gold-soft)]">{brokerQuoteContent.historyTitle}</p>
-                      <p className="mt-3 text-sm leading-7 text-white/64">{brokerQuoteContent.historyDescription}</p>
-                      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                        <Field label={brokerQuoteContent.labels.accidentCount}>
-                          <select
-                            value={brokerQuote.accidentCount}
-                            onChange={(event) => handleBrokerQuoteField("accidentCount", event.target.value)}
-                            className="vault-input"
-                          >
-                            {brokerQuoteContent.accidentOptions.map((option, index) => (
-                              <option key={option} value={index === 2 ? "2" : String(index)}>
-                                {option}
-                              </option>
-                            ))}
-                          </select>
-                        </Field>
-                        <Field label={brokerQuoteContent.labels.ticketCount}>
-                          <select
-                            value={brokerQuote.ticketCount}
-                            onChange={(event) => handleBrokerQuoteField("ticketCount", event.target.value)}
-                            className="vault-input"
-                          >
-                            {brokerQuoteContent.ticketOptions.map((option, index) => (
-                              <option key={option} value={index === 2 ? "2" : String(index)}>
-                                {option}
-                              </option>
-                            ))}
-                          </select>
-                        </Field>
-                      </div>
-                      <div className="mt-4 grid gap-4">
-                        <Field label={brokerQuoteContent.labels.priorInsurance}>
-                          <select
-                            value={brokerQuote.priorInsurance}
-                            onChange={(event) => handleBrokerQuoteField("priorInsurance", event.target.value)}
-                            className="vault-input"
-                          >
-                            <option value="active">{brokerQuoteContent.priorInsuranceOptions[0]}</option>
-                            <option value="inactive">{brokerQuoteContent.priorInsuranceOptions[1]}</option>
-                            <option value="limited">{brokerQuoteContent.priorInsuranceOptions[2]}</option>
-                          </select>
-                        </Field>
-                        <Field label={brokerQuoteContent.labels.historyNotes}>
-                          <textarea
-                            value={brokerQuote.historyNotes}
-                            onChange={(event) => handleBrokerQuoteField("historyNotes", event.target.value)}
-                            placeholder={brokerQuoteContent.placeholders.historyNotes}
-                            className="vault-input min-h-[120px] resize-y py-4"
-                          />
-                        </Field>
-                      </div>
-                    </div>
-                    <a href="#application-vault" className="pt-2">
-                      <Button className="vault-button w-full rounded-full px-8 py-6 text-xs uppercase tracking-[0.26em]">
-                        {brokerQuoteContent.cta}
-                      </Button>
-                    </a>
-                  </div>
-
-                  <div className="rounded-[1.8rem] border border-[rgba(214,175,74,0.16)] bg-[rgba(8,8,8,0.58)] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl md:p-7">
-                    <p className="vault-eyebrow">{brokerQuoteContent.summaryTitle}</p>
-                    {brokerQuoteEstimate ? (
-                      <div className="mt-5 grid gap-6">
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="rounded-[1.4rem] border border-[rgba(214,175,74,0.16)] bg-black/30 p-5">
-                            <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{brokerQuoteContent.annualEstimate}</p>
-                            <p className="mt-3 font-display text-4xl text-[var(--vault-text)]">{formatBrokerQuoteCurrency.format(Math.round(brokerQuoteEstimate.annual))}</p>
-                          </div>
-                          <div className="rounded-[1.4rem] border border-[rgba(214,175,74,0.16)] bg-black/30 p-5">
-                            <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">{brokerQuoteContent.monthlyEstimate}</p>
-                            <p className="mt-3 font-display text-4xl text-[var(--vault-text)]">{formatBrokerQuoteCurrency.format(Math.round(brokerQuoteEstimate.monthly))}</p>
-                          </div>
-                        </div>
-
-                        <div className="grid gap-3 sm:grid-cols-2">
-                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4 sm:col-span-2">
-                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.vehicleProfile}</p>
-                            <p className="mt-2 text-base text-[var(--vault-text)]">{brokerQuoteEstimate.vehicleLabel}</p>
-                          </div>
-                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4 sm:col-span-2">
-                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.driverHistoryCapture}</p>
-                            <p className="mt-2 text-sm leading-7 text-white/70">
-                              {brokerQuoteContent.ticketOptions[Number(brokerQuoteEstimate.ticketCount)]} · {brokerQuoteEstimate.priorInsurance === "active"
-                                ? brokerQuoteContent.priorInsuranceOptions[0]
-                                : brokerQuoteEstimate.priorInsurance === "inactive"
-                                  ? brokerQuoteContent.priorInsuranceOptions[1]
-                                  : brokerQuoteContent.priorInsuranceOptions[2]}
-                            </p>
-                            <p className="mt-2 text-xs leading-6 text-white/46">{brokerQuoteEstimate.historyNotes || brokerQuoteContent.historyOnlyNote}</p>
-                          </div>
-                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
-                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorAge}</p>
-                            <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.ageFactor.toFixed(2)}</p>
-                          </div>
-                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
-                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorVehicle}</p>
-                            <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.vehicleFactor.toFixed(2)}</p>
-                            <p className="mt-1 text-xs text-white/50">
-                              {brokerQuoteEstimate.vehicleTier === "luxury"
-                                ? brokerQuoteContent.vehicleLuxury
-                                : brokerQuoteEstimate.vehicleTier === "standard"
-                                  ? brokerQuoteContent.vehicleStandard
-                                  : brokerQuoteContent.vehicleNeutral}
-                            </p>
-                          </div>
-                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
-                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorClaims}</p>
-                            <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.claimsFactor.toFixed(2)}</p>
-                          </div>
-                          <div className="rounded-[1.2rem] border border-white/8 bg-black/20 p-4">
-                            <p className="text-[10px] uppercase tracking-[0.24em] text-white/45">{brokerQuoteContent.factorLocation}</p>
-                            <p className="mt-2 text-base text-[var(--vault-text)]">× {brokerQuoteEstimate.locationFactor.toFixed(2)}</p>
-                            <p className="mt-1 text-xs text-white/50">
-                              {brokerQuoteEstimate.isMontreal ? brokerQuoteContent.locationMontreal : brokerQuoteContent.locationOutside}
-                            </p>
-                          </div>
-                        </div>
-
-                        {brokerQuoteEstimate.manualReview && (
-                          <div className="rounded-[1.4rem] border border-[rgba(214,175,74,0.24)] bg-[rgba(214,175,74,0.08)] p-5 text-sm leading-7 text-white/78">
-                            <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--vault-gold-soft)]">{brokerQuoteContent.manualReview}</p>
-                            <p className="mt-3">{brokerQuoteContent.manualReviewBody}</p>
-                          </div>
-                        )}
-
-                        <p className="text-sm leading-7 text-white/54">{brokerQuoteContent.disclaimer}</p>
-                      </div>
-                    ) : (
-                      <div className="mt-5 rounded-[1.4rem] border border-dashed border-[rgba(214,175,74,0.2)] bg-black/20 p-6 text-sm leading-7 text-white/58">
-                        {brokerQuoteContent.summaryPrompt}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        <section id="application-vault" className="relative py-24 md:py-32">
+        <section id="application-vault" className="hidden">
           <div className="container">
             <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
               <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }} variants={reveal} className="lg:sticky lg:top-10">

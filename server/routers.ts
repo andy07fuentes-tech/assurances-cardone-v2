@@ -50,7 +50,9 @@ async function readJson<T>(url: string): Promise<T> {
 
 type VpicResult = {
   Make_Name?: string;
+  MakeName?: string;
   Model_Name?: string;
+  ModelName?: string;
 };
 
 type VpicResponse = {
@@ -101,7 +103,7 @@ export const appRouter = router({
       .output(z.array(vehicleOptionSchema))
       .query(async () => {
         const makesResponse = await readJson<VpicResponse>(`${vpicBaseUrl}/GetMakesForVehicleType/car?format=json`);
-        return uniqueOptions(makesResponse.Results?.map((entry) => entry.Make_Name));
+        return uniqueOptions(makesResponse.Results?.map((entry) => entry.Make_Name ?? entry.MakeName));
       }),
     getModelsByYearMake: publicProcedure
       .input(
@@ -116,7 +118,7 @@ export const appRouter = router({
         const modelsResponse = await readJson<VpicResponse>(
           `${vpicBaseUrl}/GetModelsForMakeYear/make/${encodedMake}/modelyear/${input.year}?format=json`,
         );
-        return uniqueOptions(modelsResponse.Results?.map((entry) => entry.Model_Name));
+        return uniqueOptions(modelsResponse.Results?.map((entry) => entry.Model_Name ?? entry.ModelName));
       }),
     submitCarQuote: publicProcedure
       .input(quoteSubmissionSchema)
