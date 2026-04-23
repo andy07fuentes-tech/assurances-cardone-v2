@@ -18,7 +18,6 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
-import { MapView } from "@/components/Map";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -807,7 +806,6 @@ export default function Home() {
   const [showPreloader, setShowPreloader] = useState(false);
   const [form, setForm] = useState<FormState>(initialFormState);
   const [brokerQuote, setBrokerQuote] = useState<BrokerQuoteState>(initialBrokerQuoteState);
-  const [isMapsReady, setIsMapsReady] = useState(false);
   const [postalLookup, setPostalLookup] = useState<PostalLookupState>({
     status: "idle",
     normalizedPostalCode: "",
@@ -990,103 +988,6 @@ export default function Home() {
         : t.application.step2.contactOptions[0],
     }));
   }, [locale, t.application.step2.assetOptions, t.application.step2.contactOptions, t.application.step2.priorityOptions]);
-
-  useEffect(() => {
-    const normalizedPostalCode = brokerQuote.postalCode.replace(/\s+/g, "").toUpperCase();
-
-    if (!normalizedPostalCode) {
-      setPostalLookup({
-        status: "idle",
-        normalizedPostalCode: "",
-        label: "",
-        isMontreal: false,
-      });
-      return;
-    }
-
-    const canadianPostalCodePattern = /^[A-Z]\d[A-Z]\d[A-Z]\d$/;
-    if (!canadianPostalCodePattern.test(normalizedPostalCode)) {
-      setPostalLookup({
-        status: "invalid",
-        normalizedPostalCode,
-        label: "",
-        isMontreal: false,
-      });
-      return;
-    }
-
-    if (!isMapsReady || !window.google?.maps?.Geocoder) {
-      setPostalLookup((previous) => ({
-        ...previous,
-        status: "loading",
-        normalizedPostalCode,
-      }));
-      return;
-    }
-
-    let isCancelled = false;
-    const timeout = window.setTimeout(() => {
-      setPostalLookup((previous) => ({
-        ...previous,
-        status: "loading",
-        normalizedPostalCode,
-      }));
-
-      const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address: `${normalizedPostalCode}, Canada` }, (results, status) => {
-        if (isCancelled) {
-          return;
-        }
-
-        if (status !== "OK" || !results?.[0]) {
-          setPostalLookup({
-            status: "invalid",
-            normalizedPostalCode,
-            label: "",
-            isMontreal: false,
-          });
-          return;
-        }
-
-        const topResult = results[0];
-        const addressComponents = topResult.address_components ?? [];
-        const postalComponent = addressComponents.find((component) => component.types.includes("postal_code"));
-        const localityParts = addressComponents
-          .filter((component) =>
-            component.types.some((type) =>
-              ["locality", "administrative_area_level_3", "sublocality", "sublocality_level_1", "administrative_area_level_2"].includes(type),
-            ),
-          )
-          .map((component) => component.long_name)
-          .join(" ")
-          .toLowerCase();
-        const resolvedPostalCode = postalComponent?.long_name?.replace(/\s+/g, "").toUpperCase() ?? normalizedPostalCode;
-        const isMontreal = /(montreal|montréal)/.test(`${localityParts} ${topResult.formatted_address}`.toLowerCase());
-
-        if (resolvedPostalCode !== normalizedPostalCode) {
-          setPostalLookup({
-            status: "invalid",
-            normalizedPostalCode,
-            label: topResult.formatted_address,
-            isMontreal: false,
-          });
-          return;
-        }
-
-        setPostalLookup({
-          status: isMontreal ? "valid" : "outside",
-          normalizedPostalCode,
-          label: topResult.formatted_address,
-          isMontreal,
-        });
-      });
-    }, 360);
-
-    return () => {
-      isCancelled = true;
-      window.clearTimeout(timeout);
-    };
-  }, [brokerQuote.postalCode, isMapsReady]);
 
   const stepProgress = useMemo(() => `${(activeStep / 3) * 100}%`, [activeStep]);
   const formatBrokerQuoteCurrency = useMemo(
@@ -1325,14 +1226,6 @@ export default function Home() {
         ) : null}
       </AnimatePresence>
       <main className="overflow-x-hidden">
-        <div className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0" aria-hidden="true">
-          <MapView
-            className="h-0 w-0"
-            initialCenter={{ lat: 45.554, lng: -73.637 }}
-            initialZoom={10}
-            onMapReady={() => setIsMapsReady(true)}
-          />
-        </div>
         <section id="top" className="relative min-h-screen overflow-hidden border-b border-[rgba(201,162,39,0.16)]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,#f6f1e8_0%,#efe7db_100%)]" />
           <video

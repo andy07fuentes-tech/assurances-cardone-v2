@@ -78,3 +78,4 @@
 - [x] Restyle the quote form with a premium dark interface and metallic silver accents while keeping the broader site coherent.
 - [x] Validate API-driven dropdown behavior, submission flow, and saved records end to end.
 - [x] Fix Home page runtime error where useAuth is referenced without a valid import and validate the repaired homepage load.
+- [x] Fix the homepage broker connector so Google Maps JavaScript loads only once and no duplicate Maps API console error appears.
